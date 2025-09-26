@@ -24,11 +24,8 @@ function createWindow() {
         win.loadURL('http://localhost:4200');
         win.webContents.openDevTools();
         
-        // Enable live reload for Electron in development
-        require('electron-reload')(__dirname, {
-            electron: require(`${__dirname}/node_modules/electron/dist/electron`),
-            hardResetMethod: 'exit'
-        });
+        // Note: Electron reload disabled to avoid path issues
+        // Angular dev server still provides hot reloading for the web content
     } else {
         // Production mode - use built files
         const indexPath = path.join(__dirname, 'dist/claudine/browser/index.html');
