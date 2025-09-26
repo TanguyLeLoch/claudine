@@ -15,7 +15,25 @@ function createWindow() {
             enableRemoteModule: false,
         }
     });
-    win.loadURL('http://localhost:4200');
+    
+    // Load the Angular app
+    const isDev = !app.isPackaged || process.argv.includes('--dev');
+    
+    if (isDev) {
+        // Development mode - use Angular dev server for hot reloading
+        win.loadURL('http://localhost:4200');
+        win.webContents.openDevTools();
+        
+        // Enable live reload for Electron in development
+        require('electron-reload')(__dirname, {
+            electron: require(`${__dirname}/node_modules/electron/dist/electron`),
+            hardResetMethod: 'exit'
+        });
+    } else {
+        // Production mode - use built files
+        const indexPath = path.join(__dirname, 'dist/claudine/browser/index.html');
+        win.loadFile(indexPath);
+    }
 }
 // App Lifecycle
 app.whenReady().then(createWindow);
