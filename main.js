@@ -1,5 +1,5 @@
 // main.js
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, globalShortcut, ipcMain } = require('electron');
 const path = require('path');
 
 // Error Handling
@@ -13,6 +13,7 @@ function createWindow() {
         webPreferences: {
             contextIsolation: true,
             enableRemoteModule: false,
+            preload: path.join(__dirname, 'preload.js')
         }
     });
     
@@ -32,10 +33,54 @@ function createWindow() {
         win.loadFile(indexPath);
     }
 }
+// IPC handlers for shortcut management
+ipcMain.handle('toggle-shortcut', (event, shortcut, enabled) => {
+    if (enabled) {
+        // Register the shortcut
+        let shortcutNumber;
+        switch(shortcut) {
+            case 'Alt+F1':
+                shortcutNumber = '1';
+                break;
+            case 'Alt+F2':
+                shortcutNumber = '2';
+                break;
+            case 'Alt+F3':
+                shortcutNumber = '3';
+                break;
+            default:
+                return false;
+        }
+        
+        const ret = globalShortcut.register(shortcut, () => {
+            console.log(shortcutNumber);
+        });
+        
+        if (!ret) {
+            console.log(`Registration failed for ${shortcut}`);
+            return false;
+        }
+        
+        console.log(`${shortcut} shortcut registered`);
+        return true;
+    } else {
+        // Unregister the shortcut
+        globalShortcut.unregister(shortcut);
+        console.log(`${shortcut} shortcut unregistered`);
+        return true;
+    }
+});
+
 // App Lifecycle
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+    createWindow();
+});
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') app.quit();
+    if (process.platform !== 'darwin') {
+        // Unregister all shortcuts when app is about to quit
+        globalShortcut.unregisterAll();
+        app.quit();
+    }
 });
 app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

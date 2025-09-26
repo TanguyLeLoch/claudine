@@ -64,6 +64,7 @@
     },
     "files": [
       "main.js",
+      "preload.js",
       "dist/claudine/browser/**/*",
       "package.json"
     ],

@@ -2,42 +2,54 @@
   <header class="bg-white shadow-md px-6 py-4">
     <h1 class="text-2xl font-bold text-gray-800">{{ title }}</h1>
   </header>
-  <p-button ><span class="p-10">bonjour</span></p-button>
-  <button pButton>
-    <i class="pi pi-check" pButtonIcon></i>
-    <span pButtonLabel>Save</span>
-  </button>
-  <main class="p-6 max-w-4xl mx-auto">
-    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-      <h2 class="text-xl font-semibold mb-4 text-gray-700">Welcome to Claudine!</h2>
-      <p class="text-gray-600 mb-4">Your Electron + Angular app with PrimeNG & Tailwind is ready!</p>
+  
+  <main class="p-6 max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-sm p-6">
+      <h2 class="text-xl font-semibold mb-6 text-gray-700">Keyboard Shortcuts Settings</h2>
       
-      <!-- Test PrimeNG + Tailwind integration -->
       <div class="space-y-4">
-        <p-button 
-          label="Test PrimeNG Button" 
-          icon="pi pi-check"
-          class="mr-2">
-        </p-button>
-        
-        <p-button 
-          label="Secondary" 
-          severity="secondary"
-          icon="pi pi-user"
-          class="mr-2">
-        </p-button>
-        
-        <div class="mt-4">
-          <p-card header="Sample Card" class="max-w-md">
-            <p class="text-gray-600">This card demonstrates PrimeNG components styled with Tailwind utilities.</p>
-            <ng-template pTemplate="footer">
-              <div class="flex gap-2">
-                <p-button label="Save" size="small"></p-button>
-                <p-button label="Cancel" severity="secondary" size="small"></p-button>
-              </div>
-            </ng-template>
-          </p-card>
+        <div class="flex items-center space-x-3">
+          <p-checkbox 
+            [(ngModel)]="shortcut1Enabled" 
+            [binary]="true"
+            inputId="shortcut1"
+            (onChange)="onShortcut1Change($event)">
+          </p-checkbox>
+          <label for="shortcut1" class="text-gray-700 font-medium">
+            Alt + F1 Shortcut (Console: 1)
+          </label>
         </div>
+        
+        <div class="flex items-center space-x-3">
+          <p-checkbox 
+            [(ngModel)]="shortcut2Enabled" 
+            [binary]="true"
+            inputId="shortcut2"
+            (onChange)="onShortcut2Change($event)">
+          </p-checkbox>
+          <label for="shortcut2" class="text-gray-700 font-medium">
+            Alt + F2 Shortcut (Console: 2)
+          </label>
+        </div>
+        
+        <div class="flex items-center space-x-3">
+          <p-checkbox 
+            [(ngModel)]="shortcut3Enabled" 
+            [binary]="true"
+            inputId="shortcut3"
+            (onChange)="onShortcut3Change($event)">
+          </p-checkbox>
+          <label for="shortcut3" class="text-gray-700 font-medium">
+            Alt + F3 Shortcut (Console: 3)
+          </label>
+        </div>
+      </div>
+      
+      <div class="mt-6 p-4 bg-blue-50 rounded-md">
+        <p class="text-sm text-blue-700">
+          <i class="pi pi-info-circle mr-2"></i>
+          Enable shortcuts to activate global keyboard commands. Check console for output.
+        </p>
       </div>
     </div>
   </main>
