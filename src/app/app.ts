@@ -20,16 +20,9 @@ declare global {
 export class App {
   protected title = 'Claudine';
   
-  shortcut1Enabled = false;
   shortcut2Enabled = false;
   shortcut3Enabled = false;
-
-  onShortcut1Change(event: any) {
-    this.shortcut1Enabled = event.checked;
-    if (window.electronAPI) {
-      window.electronAPI.toggleShortcut('Alt+F1', this.shortcut1Enabled);
-    }
-  }
+  shortcut4Enabled = false;
 
   onShortcut2Change(event: any) {
     this.shortcut2Enabled = event.checked;
@@ -42,6 +35,13 @@ export class App {
     this.shortcut3Enabled = event.checked;
     if (window.electronAPI) {
       window.electronAPI.toggleShortcut('Alt+F3', this.shortcut3Enabled);
+    }
+  }
+
+  onShortcut4Change(event: any) {
+    this.shortcut4Enabled = event.checked;
+    if (window.electronAPI) {
+      window.electronAPI.toggleShortcut('Alt+F4', this.shortcut4Enabled);
     }
   }
 }

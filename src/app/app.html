@@ -8,16 +8,11 @@
       <h2 class="text-xl font-semibold mb-6 text-gray-700">Keyboard Shortcuts Settings</h2>
       
       <div class="space-y-4">
-        <div class="flex items-center space-x-3">
-          <p-checkbox 
-            [(ngModel)]="shortcut1Enabled" 
-            [binary]="true"
-            inputId="shortcut1"
-            (onChange)="onShortcut1Change($event)">
-          </p-checkbox>
-          <label for="shortcut1" class="text-gray-700 font-medium">
-            Alt + F1 Shortcut (Console: 1)
-          </label>
+        <div class="p-4 bg-amber-50 rounded-md mb-4">
+          <p class="text-sm text-amber-700">
+            <i class="pi pi-info-circle mr-2"></i>
+            <strong>Alt + F1:</strong> Show/Hide this window
+          </p>
         </div>
         
         <div class="flex items-center space-x-3">
@@ -41,6 +36,18 @@
           </p-checkbox>
           <label for="shortcut3" class="text-gray-700 font-medium">
             Alt + F3 Shortcut (Console: 3)
+          </label>
+        </div>
+        
+        <div class="flex items-center space-x-3">
+          <p-checkbox 
+            [(ngModel)]="shortcut4Enabled" 
+            [binary]="true"
+            inputId="shortcut4"
+            (onChange)="onShortcut4Change($event)">
+          </p-checkbox>
+          <label for="shortcut4" class="text-gray-700 font-medium">
+            Alt + F4 Shortcut (Console: 4)
           </label>
         </div>
       </div>
