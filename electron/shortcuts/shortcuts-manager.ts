@@ -4,6 +4,7 @@
 
 import { globalShortcut } from 'electron';
 import { processText } from '../text-processor/processor';
+import { captureAndExtractText } from '../text-processor/screenshot-processor';
 
 /**
  * Register global keyboard shortcuts
@@ -22,6 +23,11 @@ export const registerShortcuts = (): void => {
   // Alt+F3: Translate to French
   globalShortcut.register('Alt+F3', () => {
     processText('translateToFrench');
+  });
+
+  // Alt+Shift+F2: Screenshot OCR
+  globalShortcut.register('Alt+Shift+F2', () => {
+    captureAndExtractText();
   });
 };
 

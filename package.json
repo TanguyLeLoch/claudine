@@ -2,20 +2,21 @@
   "name": "claudine",
   "version": "1.0.0",
   "description": "Claudine Desktop Application",
-
   "main": "dist/electron/main.js",
   "homepage": "https://github.com/tanguyleloch/claudine",
   "author": {
     "name": "Tanguy Le Loch",
     "email": "tanguylelochpro@gmail.com"
   },
-
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "electron": "npm run build:electron && electron dist/electron/main.js --dev",
     "build": "ng build --base-href ./",
-    "build:electron": "tsc -p tsconfig.electron.json",
+
+    "build:electron": "tsc -p tsconfig.electron.json && npm run copyfile",
+    "copyfile": "copyfiles -f electron/text-processor/selection-overlay.html dist/electron/text-processor",
+
     "build:all-parts": "npm run build && npm run build:electron",
     "test": "ng test",
     "build:current": "npm run build:all-parts && electron-builder",
@@ -54,6 +55,7 @@
     "@types/jasmine": "~5.1.0",
     "@types/node": "^22.0.0",
     "autoprefixer": "^10.4.21",
+    "copyfiles": "^2.4.1",
     "electron": "^38.1.2",
     "electron-builder": "^26.0.12",
     "electron-reload": "^2.0.0-alpha.1",
@@ -63,6 +65,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "onchange": "^7.1.0",
     "typescript": "~5.8.2"
   },
   "build": {
@@ -81,6 +84,14 @@
       {
         "from": "assets",
         "to": "assets"
+      },
+      {
+        "from": "electron/text-processor/selection-overlay.html",
+        "to": "electron/text-processor/selection-overlay.html"
+      },
+      {
+        "from": "electron/text-processor/selection-preload.js",
+        "to": "electron/text-processor/selection-preload.js"
       }
     ],
     "mac": {

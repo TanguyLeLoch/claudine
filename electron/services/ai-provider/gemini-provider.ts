@@ -53,4 +53,30 @@ export class GeminiProvider implements AIProvider {
       throw new Error(`Failed to translate to French: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
+
+  async extractTextFromImage(imageBuffer: Buffer): Promise<string> {
+    const prompt = 'Extract all text from this image. Return ONLY the extracted text, maintaining the original layout and structure as much as possible.';
+
+    try {
+      // Convert buffer to base64
+      const base64Image = imageBuffer.toString('base64');
+
+      // Send to Gemini with image
+      const result = await this.model.generateContent([
+        prompt,
+        {
+          inlineData: {
+            data: base64Image,
+            mimeType: 'image/png'
+          }
+        }
+      ]);
+
+      const response = await result.response;
+      return response.text().trim();
+    } catch (error) {
+      console.error('Error extracting text from image:', error);
+      throw new Error(`Failed to extract text from image: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
 }

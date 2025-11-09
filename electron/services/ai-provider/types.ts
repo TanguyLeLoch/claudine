@@ -23,6 +23,13 @@ export interface AIProvider {
    * @returns The translated text in French
    */
   translateToFrench(text: string): Promise<string>;
+
+  /**
+   * Extract text from an image using OCR
+   * @param imageBuffer The image buffer to process
+   * @returns The extracted text
+   */
+  extractTextFromImage(imageBuffer: Buffer): Promise<string>;
 }
 
 /**
