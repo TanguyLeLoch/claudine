@@ -3,7 +3,11 @@
     "allow": [
       "Bash(git mv:*)",
       "Bash(npm run build:electron:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "WebFetch(domain:www.electronjs.org)",
+      "Bash(xargs cat:*)",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

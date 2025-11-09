@@ -3,11 +3,17 @@
  */
 
 import { BrowserWindow, screen, clipboard, dialog, ipcMain, nativeImage, app } from 'electron';
-import { screen as nutScreen, Region } from '@nut-tree-fork/nut-js';
+// import { screen as nutScreen } from '@nut-tree-fork/nut-js';
+import { imageToJimp } from '@nut-tree-fork/shared';
+import { desktopCapturer } from 'electron';
+
 import path from 'node:path';
+import fs from 'node:fs';
+import os from 'node:os';
 import { configStore } from '../services/config-store';
 import { AIProviderFactory } from '../services/ai-provider';
 import { createSettingsWindow } from '../windows/settings-window';
+import Rectangle = Electron.Rectangle;
 
 export type SelectionArea = {
   x: number;
@@ -25,6 +31,8 @@ export type DisplayBounds = {
   scaleFactor: number;
 };
 
+
+
 /**
  * Capture a screenshot area and extract text using OCR
  */
@@ -40,7 +48,6 @@ export const captureAndExtractText = async (): Promise<void> => {
 
     // Get all displays
     const allDisplays = screen.getAllDisplays();
-    console.log('Displays found:', allDisplays.length);
 
     // Create one overlay window per display
     const selectionWindows: BrowserWindow[] = [];
@@ -92,7 +99,6 @@ export const captureAndExtractText = async (): Promise<void> => {
       selectionWindows.push(selectionWindow);
     }
 
-    console.log(`${selectionWindows.length} overlay windows shown`);
 
     // Wait for selection using IPC events from any window
     const selection = await new Promise<SelectionArea | null>((resolve) => {
@@ -134,7 +140,7 @@ export const captureAndExtractText = async (): Promise<void> => {
       });
     });
 
-    if (!selection || selection.width < 10 || selection.height < 10) {
+    if (!selection) {
       console.log('No valid selection');
       return;
     }
@@ -149,52 +155,51 @@ export const captureAndExtractText = async (): Promise<void> => {
     }
 
     const scaleFactor = displayForSelection.scaleFactor || 1;
-    const displayBounds = displayForSelection.bounds;
 
-    // Convert window-relative coordinates to absolute screen coordinates
-    // Selection x,y are relative to the overlay window (0,0 at top-left of display)
-    // We need to add the display's offset to get absolute screen coordinates
-    const absoluteX = selection.x + displayBounds.x;
-    const absoluteY = selection.y + displayBounds.y;
-
-    console.log('Selection is on display:', {
+    console.log('Capturing display:', {
       id: displayForSelection.id,
-      bounds: displayBounds,
+      bounds: displayForSelection.bounds,
       scaleFactor,
-      absoluteCoords: { x: absoluteX, y: absoluteY }
+      selection: { x: selection.x, y: selection.y, width: selection.width, height: selection.height }
     });
 
-    // Create region with proper scaling
-    const region = new Region(
-      Math.round(absoluteX * scaleFactor),
-      Math.round(absoluteY * scaleFactor),
-      Math.round(selection.width * scaleFactor),
-      Math.round(selection.height * scaleFactor)
-    );
-
-    console.log('Capturing region:', region);
-
-    // Capture the selected area using nut.js
-    const screenshot = await nutScreen.grabRegion(region);
-
-    console.log('Screenshot captured:', {
-      width: screenshot.width,
-      height: screenshot.height,
-      pixelDensity: screenshot.pixelDensity
-    });
-
-    // Create nativeImage from raw pixel buffer
-    const image = nativeImage.createFromBuffer(
-      Buffer.from(screenshot.data),
-      {
-        width: screenshot.width,
-        height: screenshot.height,
-        scaleFactor: screenshot.pixelDensity?.scaleX || 1
+    // Capture the ENTIRE display (no coordinate issues!)
+    const sources = await desktopCapturer.getSources({
+      types: ['screen'],
+      thumbnailSize: {
+        width: displayForSelection.bounds.width * scaleFactor,
+        height: displayForSelection.bounds.height * scaleFactor
       }
-    );
+    });
+    const source = sources.find(s => s.display_id == String(selection.displayId));
+    const screenshot = source!.thumbnail; // This is a NativeImage
+    const res = screenshot.toPNG()
+    fs.writeFileSync( `/Users/tanguy.leloch/dev/claudine/temp/${Date.now()}.png`, res);
 
-    // Convert to PNG buffer
-    const imageBuffer = image.toPNG();
+
+    const rect  : Rectangle= selection;
+    rect.x *= scaleFactor;
+    rect.y  *= scaleFactor;
+    rect.width *= scaleFactor;
+    rect.height  *= scaleFactor;
+
+
+    const cropped = screenshot.crop(rect)
+    fs.writeFileSync( `/Users/tanguy.leloch/dev/claudine/temp/cropped${Date.now()}.png`, cropped.toPNG());
+    // const imageBuffer = screenshot.toPNG();
+
+
+    console.log('Image cropped and converted to PNG');
+
+    // Save screenshot for debugging
+    const screenshotDir = path.join(os.homedir(), 'claudine-screenshots');
+    if (!fs.existsSync(screenshotDir)) {
+      fs.mkdirSync(screenshotDir, { recursive: true });
+    }
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const screenshotPath = path.join(screenshotDir, `screenshot-${timestamp}.png`);
+    fs.writeFileSync(screenshotPath, cropped.toPNG());
+    console.log('Screenshot saved to:', screenshotPath);
 
     console.log('Screenshot captured, sending to AI...');
 
@@ -205,7 +210,7 @@ export const captureAndExtractText = async (): Promise<void> => {
     });
 
     // Extract text from image
-    const extractedText = await provider.extractTextFromImage(imageBuffer);
+    const extractedText = await provider.extractTextFromImage(cropped.toPNG());
 
     console.log('Extracted text:', extractedText);
 
