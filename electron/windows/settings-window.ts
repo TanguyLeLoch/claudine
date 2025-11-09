@@ -35,7 +35,8 @@ export const createSettingsWindow = (): void => {
     settingsWindow.loadURL('http://localhost:4200');
   } else {
     // Production mode - use built files
-    const indexPath = path.join(__dirname, '../../dist/claudine/browser/index.html');
+    // __dirname is app.asar/dist/electron/windows, so ../../ goes to app.asar/dist
+    const indexPath = path.join(__dirname, '../../claudine/browser/index.html');
     settingsWindow.loadFile(indexPath);
   }
 

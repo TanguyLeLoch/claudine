@@ -75,8 +75,13 @@
     "files": [
       "dist/electron/**/*",
       "dist/claudine/browser/**/*",
-      "assets/**/*",
       "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "assets",
+        "to": "assets"
+      }
     ],
     "mac": {
       "category": "public.app-category.utilities",

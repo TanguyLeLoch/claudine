@@ -1,0 +1,44 @@
+<p-message
+  severity="info"
+  styleClass="mb-4 w-full">
+  Configure your AI provider settings. The API key will be stored securely on your device.
+</p-message>
+
+<p-card header="API Configuration">
+  <div class="space-y-6">
+    <!-- Provider Selection -->
+    <div class="flex flex-col gap-2">
+      <label for="provider" class="font-semibold text-gray-700">AI Provider</label>
+      <p-select
+        inputId="provider"
+        [(ngModel)]="selectedProvider"
+        [options]="providers"
+        optionLabel="label"
+        placeholder="Select a provider"
+        class="w-full">
+      </p-select>
+    </div>
+
+    <!-- API Key Input -->
+    <div class="flex flex-col gap-2">
+      <label for="apiKey" class="font-semibold text-gray-700">API Key</label>
+      <input
+        pInputText
+        id="apiKey"
+        type="password"
+        [(ngModel)]="apiKey"
+        placeholder="Enter your API key"
+        class="w-full" />
+    </div>
+
+    <!-- Save Button -->
+    <div class="flex gap-3 mt-6">
+      <p-button
+        label="Save Settings"
+        icon="pi pi-check"
+        (onClick)="onSave()"
+        styleClass="flex-1">
+      </p-button>
+    </div>
+  </div>
+</p-card>

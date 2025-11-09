@@ -15,8 +15,8 @@ export const createTray = (): void => {
   // Resolve icon path for both dev and production
   const isDev = !app.isPackaged;
   const iconPath = isDev
-    ? path.join(__dirname, '../../../assets', 'icon.png')  // dev: dist/electron/tray -> root/assets
-    : path.join(process.resourcesPath, 'assets', 'icon.png');  // production
+    ? path.join(__dirname, '../../../assets', 'icon64.png')  // dev: dist/electron/tray -> root/assets
+    : path.join(process.resourcesPath, 'assets', 'icon64.png');  // production
 
   const icon = nativeImage.createFromPath(iconPath);
 
