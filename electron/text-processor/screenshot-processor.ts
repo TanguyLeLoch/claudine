@@ -72,7 +72,6 @@ export const captureAndExtractText = async (): Promise<void> => {
         skipTaskbar: true,
         resizable: false,
         movable: false,
-        fullscreen: false,
         webPreferences: {
           preload: app.isPackaged
             ? path.join(process.resourcesPath, 'electron/text-processor/selection-preload.js')
@@ -82,8 +81,17 @@ export const captureAndExtractText = async (): Promise<void> => {
         },
       });
 
+
       // Send this display's info to the renderer
       selectionWindow.webContents.on('did-finish-load', () => {
+        console.log('display bounds', {
+          id,
+          offsetX: bounds.x,
+          offsetY: bounds.y,
+          width: bounds.width,
+          height: bounds.height,
+          scaleFactor
+        });
         selectionWindow.webContents.send('display-bounds', {
           id,
           offsetX: bounds.x,

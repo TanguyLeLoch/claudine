@@ -40,7 +40,6 @@ export const processText = async (operation: TextOperation): Promise<void> => {
     }
 
     const selectedText = clipboard.readText();
-    console.log(`Processing ${operation} >> ${selectedText}\n`);
 
     if (!selectedText || selectedText.trim() === '') {
       dialog.showErrorBox('No Text Selected', 'Please select some text first');

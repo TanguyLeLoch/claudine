@@ -51,12 +51,15 @@
     window.electronAPI.onDisplayBounds((bounds) => {
         displayInfo = bounds;
         console.log('Display info received:', bounds);
+
     });
 
     document.addEventListener('mousedown', (e) => {
+        console.log(startX, startY);
         isDrawing = true;
         startX = e.clientX;
         startY = e.clientY;
+
         selection.style.left = startX + 'px';
         selection.style.top = startY + 'px';
         selection.style.width = '0px';
@@ -66,7 +69,7 @@
 
     document.addEventListener('mousemove', (e) => {
         if (!isDrawing) return;
-        const currentX = e.clientX;
+        const currentX = e.clientX ;
         const currentY = e.clientY;
         const width = Math.abs(currentX - startX);
         const height = Math.abs(currentY - startY);
@@ -91,9 +94,13 @@
 
         // Send selection via IPC with display ID
         // Coordinates are already relative to this window (which is positioned at the display's bounds)
+
+        const offsetX = e.clientX - e.screenX + displayInfo.offsetX;
+        const offsetY = e.clientY - e.screenY  + displayInfo.offsetY;
+
         window.electronAPI.sendSelection({
-            x: left,
-            y: top,
+            x: left - offsetX,
+            y: top  - offsetY,
             width,
             height,
             displayId: displayInfo ? displayInfo.id : 0
