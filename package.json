@@ -2,7 +2,8 @@
   "name": "claudine",
   "version": "1.0.0",
   "description": "Claudine Desktop Application",
-  "main": "main.js",
+
+  "main": "dist/electron/main.js",
   "homepage": "https://github.com/tanguyleloch/claudine",
   "author": {
     "name": "Tanguy Le Loch",
@@ -12,14 +13,16 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "electron": "electron . --dev",
+    "electron": "npm run build:electron && electron dist/electron/main.js --dev",
     "build": "ng build --base-href ./",
+    "build:electron": "tsc -p tsconfig.electron.json",
+    "build:all-parts": "npm run build && npm run build:electron",
     "test": "ng test",
-    "build:current": "npm run build && electron-builder",
-    "build:mac": "npm run build && electron-builder --mac",
-    "build:win": "npm run build && electron-builder --win",
-    "build:linux": "npm run build && electron-builder --linux",
-    "build:all": "npm run build && electron-builder --mac --win --linux"
+    "build:current": "npm run build:all-parts && electron-builder",
+    "build:mac": "npm run build:all-parts && electron-builder --mac",
+    "build:win": "npm run build:all-parts && electron-builder --win",
+    "build:linux": "npm run build:all-parts && electron-builder --linux",
+    "build:all": "npm run build:all-parts && electron-builder --mac --win --linux"
   },
   "private": true,
   "dependencies": {
@@ -29,8 +32,12 @@
     "@angular/forms": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
     "@angular/router": "^20.0.0",
+    "@google/generative-ai": "^0.21.0",
+    "@nut-tree-fork/nut-js": "^4.2.3",
     "@primeuix/themes": "^1.2.4",
     "@tailwindcss/postcss": "^4.1.12",
+    "electron-squirrel-startup": "^1.0.1",
+    "electron-store": "^10.0.0",
     "postcss": "^8.5.6",
     "primeicons": "^7.0.0",
     "primeng": "^20.2.0",
@@ -45,6 +52,7 @@
     "@angular/cli": "^20.0.0",
     "@angular/compiler-cli": "^20.0.0",
     "@types/jasmine": "~5.1.0",
+    "@types/node": "^22.0.0",
     "autoprefixer": "^10.4.21",
     "electron": "^38.1.2",
     "electron-builder": "^26.0.12",
@@ -60,13 +68,14 @@
   "build": {
     "appId": "com.example.claudine",
     "productName": "Claudine",
+    "icon": "assets/icon.png",
     "directories": {
       "output": "release"
     },
     "files": [
-      "main.js",
-      "preload.js",
+      "dist/electron/**/*",
       "dist/claudine/browser/**/*",
+      "assets/**/*",
       "package.json"
     ],
     "mac": {
