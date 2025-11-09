@@ -1,9 +1,10 @@
 // main.js
-const { app, BrowserWindow, globalShortcut, ipcMain, screen } = require('electron');
+const { app, BrowserWindow, globalShortcut, ipcMain, screen, Tray, Menu } = require('electron');
 const path = require('path');
 
 let toastWindow = null;
 let mainWindow = null;
+let tray = null;
 
 function createToast(message) {
     // Close existing toast if any
@@ -66,7 +67,7 @@ function createToast(message) {
             </style>
         </head>
         <body>
-            <div class="toast">Shortcut ${message}</div>
+            <div class="toast p-0">Shortcut ${message}</div>
         </body>
         </html>
     `;
@@ -95,13 +96,23 @@ process.on('uncaughtException', (error) => {
 });
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
-        show: false, // Don't show the main window
+        width: 400,
+        height: 500,
+        // show: false,
+        // frame: false, // Remove window frame for menu bar style
+        resizable: false,
+        skipTaskbar: true, // Don't show in taskbar
         webPreferences: {
             contextIsolation: true,
             nodeIntegration: false,
             preload: path.join(__dirname, 'preload.js')
+        }
+    });
+    
+    // Hide window when it loses focus (macOS behavior)
+    mainWindow.on('blur', () => {
+        if (mainWindow && mainWindow.isVisible()) {
+            mainWindow.hide();
         }
     });
     
@@ -166,7 +177,7 @@ app.whenReady().then(() => {
     createWindow();
     
     // Register Alt+F1 to toggle main window visibility
-    globalShortcut.register('Alt+F1', () => {
+    globalShortcut.register('Alt+F6', () => {
         if (mainWindow) {
             if (mainWindow.isVisible()) {
                 mainWindow.hide();
@@ -175,6 +186,18 @@ app.whenReady().then(() => {
                 mainWindow.focus();
             }
         }
+    });
+
+    // Register Alt+F2
+    globalShortcut.register('Alt+F1', () => {
+        console.log('1');
+        createToast('1');
+    });
+
+    // Register Alt+F3
+    globalShortcut.register('Alt+F2', () => {
+        console.log('2');
+        createToast('2');
     });
 });
 app.on('window-all-closed', () => {

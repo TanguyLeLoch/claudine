@@ -8,6 +8,7 @@
     "name": "Tanguy Le Loch",
     "email": "tanguylelochpro@gmail.com"
   },
+
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

@@ -8,40 +8,30 @@
       <h2 class="text-xl font-semibold mb-6 text-gray-700">Keyboard Shortcuts Settings</h2>
       
       <div class="space-y-4">
-        <div class="p-4 bg-amber-50 rounded-md mb-4">
+        <div class="p-4 bg-amber-50 rounded-md">
           <p class="text-sm text-amber-700">
             <i class="pi pi-info-circle mr-2"></i>
             <strong>Alt + F1:</strong> Show/Hide this window
           </p>
         </div>
-        
-        <div class="flex items-center space-x-3">
-          <p-checkbox 
-            [(ngModel)]="shortcut2Enabled" 
-            [binary]="true"
-            inputId="shortcut2"
-            (onChange)="onShortcut2Change($event)">
-          </p-checkbox>
-          <label for="shortcut2" class="text-gray-700 font-medium">
-            Alt + F2 Shortcut (Console: 2)
-          </label>
+
+        <div class="p-4 bg-amber-50 rounded-md">
+          <p class="text-sm text-amber-700">
+            <i class="pi pi-info-circle mr-2"></i>
+            <strong>Alt + F2:</strong> Show toast notification (Console: 2)
+          </p>
         </div>
-        
-        <div class="flex items-center space-x-3">
-          <p-checkbox 
-            [(ngModel)]="shortcut3Enabled" 
-            [binary]="true"
-            inputId="shortcut3"
-            (onChange)="onShortcut3Change($event)">
-          </p-checkbox>
-          <label for="shortcut3" class="text-gray-700 font-medium">
-            Alt + F3 Shortcut (Console: 3)
-          </label>
+
+        <div class="p-4 bg-amber-50 rounded-md">
+          <p class="text-sm text-amber-700">
+            <i class="pi pi-info-circle mr-2"></i>
+            <strong>Alt + F3:</strong> Show toast notification (Console: 3)
+          </p>
         </div>
-        
+
         <div class="flex items-center space-x-3">
-          <p-checkbox 
-            [(ngModel)]="shortcut4Enabled" 
+          <p-checkbox
+            [(ngModel)]="shortcut4Enabled"
             [binary]="true"
             inputId="shortcut4"
             (onChange)="onShortcut4Change($event)">
