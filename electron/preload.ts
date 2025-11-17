@@ -15,4 +15,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // Window operations
   closeSettings: () => ipcRenderer.send('close-settings'),
+
+  // Toast operations (for toast window)
+  onShowToast: (callback: (message: string) => void) => {
+    ipcRenderer.on('show-toast', (_event, message) => callback(message));
+  },
+  onHideToast: (callback: () => void) => {
+    ipcRenderer.on('hide-toast', () => callback());
+  },
 });

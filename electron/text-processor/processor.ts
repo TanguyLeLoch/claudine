@@ -8,6 +8,7 @@ import { configStore } from '../services/config-store';
 import { AIProviderFactory } from '../services/ai-provider';
 import { sleep } from '../utils/helpers';
 import { createSettingsWindow } from '../windows/settings-window';
+import { showToast, hideToast } from '../toast/toast-window-manager';
 
 export type TextOperation = 'fixTypos' | 'translateToEnglish' | 'translateToFrench';
 
@@ -46,6 +47,14 @@ export const processText = async (operation: TextOperation): Promise<void> => {
       return;
     }
 
+    // Show toast notification
+    const operationMessages: Record<TextOperation, string> = {
+      fixTypos: 'Fixing typos and grammar...',
+      translateToEnglish: 'Translating to English...',
+      translateToFrench: 'Translating to French...',
+    };
+    showToast(operationMessages[operation]);
+
     // Create AI provider
     const provider = AIProviderFactory.createProvider({
       apiKey: configStore.getApiKey(),
@@ -80,7 +89,11 @@ export const processText = async (operation: TextOperation): Promise<void> => {
     await sleep(500);
     clipboard.writeText(originalClipboard);
 
+    // Hide toast notification
+    hideToast();
+
   } catch (error) {
+    hideToast();
     dialog.showErrorBox('Processing Error', error instanceof Error ? error.message : 'Unknown error');
   }
 };

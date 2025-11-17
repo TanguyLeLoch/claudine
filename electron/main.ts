@@ -10,6 +10,7 @@ import { createSettingsWindow } from './windows/settings-window';
 import { createTray } from './tray/tray-manager';
 import { registerShortcuts, unregisterShortcuts } from './shortcuts/shortcuts-manager';
 import { setupIpcHandlers } from './ipc/handlers';
+import { createToastWindow, destroyToastWindow } from './toast/toast-window-manager';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling
 if (started) {
@@ -21,6 +22,7 @@ app.whenReady().then(() => {
   createTray();
   registerShortcuts();
   setupIpcHandlers();
+  createToastWindow(); // Initialize toast notification window
   app.setLoginItemSettings({
     openAtLogin: true,
     openAsHidden: true,
@@ -38,9 +40,10 @@ app.on('window-all-closed', () => {
   // User can quit via tray menu
 });
 
-// Cleanup shortcuts on quit
+// Cleanup shortcuts and toast window on quit
 app.on('will-quit', () => {
   unregisterShortcuts();
+  destroyToastWindow();
 });
 
 // macOS specific: open settings if no windows

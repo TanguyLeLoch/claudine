@@ -10,14 +10,16 @@
   },
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve claudine",
+    "start:toast": "ng serve toast-overlay",
     "electron": "npm run build:electron && electron dist/electron/main.js --dev",
-    "build": "ng build --base-href ./",
+    "build": "ng build claudine --base-href ./",
+    "build:toast": "ng build toast-overlay --base-href ./",
 
     "build:electron": "tsc -p tsconfig.electron.json && npm run copyfile",
     "copyfile": "copyfiles -f electron/text-processor/selection-overlay.html dist/electron/text-processor",
 
-    "build:all-parts": "npm run build && npm run build:electron",
+    "build:all-parts": "npm run build && npm run build:toast && npm run build:electron",
     "test": "ng test",
     "build:current": "npm run build:all-parts && electron-builder",
     "build:mac": "npm run build:all-parts && electron-builder --mac",
@@ -78,6 +80,7 @@
     "files": [
       "dist/electron/**/*",
       "dist/claudine/browser/**/*",
+      "dist/toast/browser/**/*",
       "package.json"
     ],
     "extraResources": [

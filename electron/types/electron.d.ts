@@ -11,11 +11,12 @@ export interface ElectronAPI {
   closeSettings: () => void;
   sendSelection: (selection: SelectionArea) => void;
   cancelSelection: () => void;
-  onDisplayBounds: (dp :DisplayBounds) => void;
-}
+  onDisplayBounds: (dp: DisplayBounds) => void;
 
+}
 declare global {
   interface Window {
     electronAPI: ElectronAPI;
+
   }
 }

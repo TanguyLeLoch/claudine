@@ -13,6 +13,7 @@ import os from 'node:os';
 import { configStore } from '../services/config-store';
 import { AIProviderFactory } from '../services/ai-provider';
 import { createSettingsWindow } from '../windows/settings-window';
+import { showToast, hideToast } from '../toast/toast-window-manager';
 import Rectangle = Electron.Rectangle;
 
 export type SelectionArea = {
@@ -211,6 +212,9 @@ export const captureAndExtractText = async (): Promise<void> => {
 
     console.log('Screenshot captured, sending to AI...');
 
+    // Show toast notification
+    showToast('Extracting text from image...');
+
     // Create AI provider
     const provider = AIProviderFactory.createProvider({
       apiKey: configStore.getApiKey(),
@@ -225,6 +229,9 @@ export const captureAndExtractText = async (): Promise<void> => {
     // Copy to clipboard
     clipboard.writeText(extractedText);
 
+    // Hide toast notification
+    hideToast();
+
     // Show success notification
     dialog.showMessageBox({
       type: 'info',
@@ -234,6 +241,7 @@ export const captureAndExtractText = async (): Promise<void> => {
     });
 
   } catch (error) {
+    hideToast();
     console.error('Screenshot OCR error:', error);
     dialog.showErrorBox('OCR Error', error instanceof Error ? error.message : 'Unknown error');
   }

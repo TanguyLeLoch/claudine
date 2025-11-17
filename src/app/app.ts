@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Menu } from 'primeng/menu';
 import { Button } from 'primeng/button';
+import { Toast } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 import type { MenuItem } from 'primeng/api';
 
 declare global {
@@ -12,6 +14,8 @@ declare global {
       getProvider: () => Promise<'gemini' | 'gpt'>;
       setProvider: (provider: string) => Promise<void>;
       closeSettings: () => void;
+      onShowToast: (callback: (message: string) => void) => void;
+      onHideToast: (callback: () => void) => void;
     };
   }
 }
