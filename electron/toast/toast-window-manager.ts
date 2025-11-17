@@ -18,15 +18,16 @@ export const createToastWindow = (): void => {
   // Create a small window in the bottom-right corner
   toastWindow = new BrowserWindow({
     width: 800,
-    height: 450,
-    x: width - 420, // 20px padding from right
-    y: height - 170, // 20px padding from bottom
+    height: 300,
+    x: width - 820 ,
+    y: 20,
     frame: false,
     transparent: true,
     alwaysOnTop: true,
     skipTaskbar: true,
     resizable: false,
     show: false,
+    focusable: false,
     webPreferences: {
       preload: path.join(__dirname, '../preload.js'),
       contextIsolation: true,
@@ -61,7 +62,7 @@ export const showToast = (message: string): void => {
     processingComplete = false;
 
     toastWindow.webContents.send('show-toast', message);
-    toastWindow.show();
+    toastWindow.showInactive();
   }
 };
 
