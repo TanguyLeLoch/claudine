@@ -10,13 +10,12 @@ export class GeminiProvider implements AIProvider {
 
   constructor(apiKey: string) {
     this.genAI = new GoogleGenerativeAI(apiKey);
-    this.model = this.genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+    this.model = this.genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
   }
 
   async fixTypos(text: string): Promise<string> {
     console.log('fixTypos(text)', text);
     const prompt = `Fix any typos and grammar mistakes in the following text. Return ONLY the corrected text without any explanations or additional comments:\n\n${text}`;
-
     try {
       const result = await this.model.generateContent(prompt);
       console.log('result' , result);
