@@ -194,7 +194,7 @@ export const captureAndExtractText = async (): Promise<void> => {
 
 
     const cropped = screenshot.crop(rect)
-    fs.writeFileSync( `/Users/tanguy.leloch/dev/claudine/temp/cropped${Date.now()}.png`, cropped.toPNG());
+    // fs.writeFileSync( `/Users/tanguy.leloch/dev/claudine/temp/cropped${Date.now()}.png`, cropped.toPNG());
     // const imageBuffer = screenshot.toPNG();
 
 
@@ -206,9 +206,9 @@ export const captureAndExtractText = async (): Promise<void> => {
       fs.mkdirSync(screenshotDir, { recursive: true });
     }
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const screenshotPath = path.join(screenshotDir, `screenshot-${timestamp}.png`);
-    fs.writeFileSync(screenshotPath, cropped.toPNG());
-    console.log('Screenshot saved to:', screenshotPath);
+    // const screenshotPath = path.join(screenshotDir, `screenshot-${timestamp}.png`);
+    // fs.writeFileSync(screenshotPath, cropped.toPNG());
+    // console.log('Screenshot saved to:', screenshotPath);
 
     console.log('Screenshot captured, sending to AI...');
 
