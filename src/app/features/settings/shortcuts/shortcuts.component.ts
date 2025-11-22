@@ -154,7 +154,7 @@ export class ShortcutsComponent implements OnInit {
       accept: async () => {
         this.shortcuts = this.shortcuts.filter((_, i) => i !== index);
         this.messageService.add({
-          severity: 'warn',
+          severity: 'success',
           summary: 'Deleted',
           detail: 'Shortcut removed'
         });
