@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // Angular CDK Imports
-import { CdkDrag, CdkDragDrop, CdkDropList, CdkDragHandle, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 
 // PrimeNG Imports
 import { Card } from 'primeng/card';
@@ -11,7 +11,7 @@ import { Tag } from 'primeng/tag';
 import { Toast } from 'primeng/toast';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService, TooltipOptions } from 'primeng/api';
 
 // Components & Types
 import { ShortcutEditorComponent } from './shortcut-editor/shortcut-editor.component';
@@ -39,6 +39,10 @@ import { type ShortcutConfig } from '../../../../types';
 })
 export class ShortcutsComponent implements OnInit {
   shortcuts: ShortcutConfig[] = [];
+  tooltipOption: TooltipOptions = {
+    tooltipPosition: 'bottom',
+    tooltipStyleClass: '!min-w-10'
+  };
 
   // Editor State
   isEditorVisible = false;
