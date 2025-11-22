@@ -36,10 +36,11 @@
     <div class="grid grid-cols-1 gap-4">
       <div class="flex flex-col gap-2">
         <label for="key" class="font-semibold text-sm">Keyboard Shortcut</label>
-        <input pInputText id="key" formControlName="key" placeholder="e.g. Alt+F1"/>
+        <app-shortcut-recorder formControlName="key"></app-shortcut-recorder>
         @if (isFieldInvalid('key')) {
-          <small class="text-red-600">Required (e.g. Alt+F1)</small>
+          <small class="text-red-600">Required</small>
         }
+        <small class="text-gray-500">Click the box and press your desired key combination.</small>
       </div>
     </div>
 

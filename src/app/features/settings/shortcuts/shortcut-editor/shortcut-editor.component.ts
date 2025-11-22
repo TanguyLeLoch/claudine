@@ -11,6 +11,7 @@ import { Select } from 'primeng/select';
 
 import { type ShortcutConfig } from '../../../../../types';
 import { PrimeTemplate } from 'primeng/api';
+import { ShortcutRecorderComponent } from './shortcut-recorder/shortcut-recorder.component';
 
 // Define the type for the form controls
 interface ShortcutFormControls {
@@ -31,7 +32,8 @@ interface ShortcutFormControls {
     InputText,
     TextareaModule,
     Select,
-    PrimeTemplate
+    PrimeTemplate,
+    ShortcutRecorderComponent
   ],
   templateUrl: './shortcut-editor.component.html',
   styleUrl: './shortcut-editor.component.scss'
