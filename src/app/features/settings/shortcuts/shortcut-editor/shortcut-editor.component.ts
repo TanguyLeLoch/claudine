@@ -41,7 +41,7 @@ interface ShortcutFormControls {
 export class ShortcutEditorComponent implements OnChanges {
   @Input() visible = false;
   @Input() shortcutData: ShortcutConfig | null = null;
-  @Input() existingNames: string[] = [];
+  @Input() existingShortcuts: ShortcutConfig[] = [];
 
   @Output() save = new EventEmitter<ShortcutConfig>();
   @Output() cancel = new EventEmitter<void>();
@@ -56,7 +56,7 @@ export class ShortcutEditorComponent implements OnChanges {
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group<ShortcutFormControls>({
-      key: new FormControl('', { nonNullable: true, validators: Validators.required }),
+      key: new FormControl('', { nonNullable: true, validators: [Validators.required, this.uniqueKeyValidator.bind(this)] }),
       name: new FormControl('', { nonNullable: true, validators: [Validators.required, this.uniqueNameValidator.bind(this)] }),
       prompt: new FormControl('', { nonNullable: true, validators: Validators.required }),
       inputType: new FormControl('text', { nonNullable: true, validators: Validators.required })
@@ -94,8 +94,24 @@ export class ShortcutEditorComponent implements OnChanges {
       return null;
     }
 
-    if (this.existingNames.includes(name)) {
+    if (this.existingShortcuts.some(s => s.name === name)) {
       return { unique: true };
+    }
+    return null;
+  }
+
+  uniqueKeyValidator(control: any) {
+    const key = control.value;
+    if (!key) return null;
+
+    // If editing, allow the current key
+    if (!this.isNew && this.shortcutData && key === this.shortcutData.key) {
+      return null;
+    }
+
+    // Check if key matches any existing shortcut's key
+    if (this.existingShortcuts.some(s => s.key === key)) {
+      return { uniqueKey: true };
     }
     return null;
   }

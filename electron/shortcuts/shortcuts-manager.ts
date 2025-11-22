@@ -105,5 +105,21 @@ export const setupShortcutsReloading = (): void => {
     }
   });
 
-  logger.info('Shortcuts live reloading enabled.');
-};
+      logger.info('Shortcuts live reloading enabled.');
+  };
+  
+  /**
+   * Temporarily unregister all shortcuts (e.g., during recording)
+   */
+  export const suspendGlobalShortcuts = (): void => {
+    logger.info('Suspending all global shortcuts...');
+    globalShortcut.unregisterAll();
+  };
+  
+  /**
+   * Resume shortcuts by re-registering them from the store
+   */
+  export const resumeGlobalShortcuts = (): void => {
+    logger.info('Resuming global shortcuts...');
+    registerShortcuts();
+  };

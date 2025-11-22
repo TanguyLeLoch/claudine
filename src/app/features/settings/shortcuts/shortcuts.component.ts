@@ -165,10 +165,6 @@ export class ShortcutsComponent implements OnInit {
     });
   }
 
-  getExistingNames(): string[] {
-    return this.shortcuts.map(s => s.name);
-  }
-
   // --- Reordering Logic ---
 
   async drop(event: CdkDragDrop<ShortcutConfig[]>) {

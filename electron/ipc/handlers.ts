@@ -7,6 +7,7 @@ import { configStore, type ShortcutConfig } from '../services/config-store';
 import { getSettingsWindow } from '../windows/settings-window';
 import { IPC_CHANNELS } from './ipc-types';
 import { logger } from '../utils/logger';
+import { resumeGlobalShortcuts, suspendGlobalShortcuts } from '../shortcuts/shortcuts-manager';
 
 /**
  * Set up IPC handlers for communication with renderer processes
@@ -34,6 +35,14 @@ export const setupIpcHandlers = (): void => {
 
   ipcMain.handle(IPC_CHANNELS.SET_SHORTCUTS, (_, shortcuts: ShortcutConfig[]) => {
     configStore.setShortcuts(shortcuts);
+  });
+
+  ipcMain.handle(IPC_CHANNELS.SUSPEND_SHORTCUTS, () => {
+    suspendGlobalShortcuts();
+  });
+
+  ipcMain.handle(IPC_CHANNELS.RESUME_SHORTCUTS, () => {
+    resumeGlobalShortcuts();
   });
 
   ipcMain.on(IPC_CHANNELS.CLOSE_SETTINGS, () => {

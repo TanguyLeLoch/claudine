@@ -33,6 +33,8 @@ export interface IElectronAPI {
   // Shortcuts
   getShortcuts: () => Promise<ShortcutConfig[]>;
   setShortcuts: (shortcuts: ShortcutConfig[]) => Promise<void>;
+  suspendShortcuts: () => Promise<void>;
+  resumeShortcuts: () => Promise<void>;
 
   // Overlay / Screenshot
   sendSelection: (selection: SelectionArea) => void;

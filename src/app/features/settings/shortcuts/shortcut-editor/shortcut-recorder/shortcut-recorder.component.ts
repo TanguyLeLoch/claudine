@@ -1,4 +1,4 @@
-import { Component, ElementRef, forwardRef, HostListener, OnInit, Renderer2, signal } from '@angular/core';
+import { Component, ElementRef, forwardRef, HostListener, OnInit, Renderer2, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -30,29 +30,33 @@ declare global {
     },
   ],
 })
-export class ShortcutRecorderComponent implements ControlValueAccessor, OnInit {
+export class ShortcutRecorderComponent implements ControlValueAccessor, OnInit, OnDestroy {
   // Internal state
   value: string = '';
   isRecording = false;
   isDisabled = false;
-
+  
   // To display keys visually split by '+'
   displayKeys = signal<string[]>([]);
-
+  
   // Keyboard layout map for mapping codes to characters
   private keyboardLayoutMap: KeyboardLayoutMap | null = null;
 
   // CVA callbacks
-  onChange: (value: string) => void = () => {
-  };
-  onTouched: () => void = () => {
-  };
+  onChange: (value: string) => void = () => {};
+  onTouched: () => void = () => {};
 
-  constructor(private renderer: Renderer2, private el: ElementRef) {
-  }
+  constructor(private renderer: Renderer2, private el: ElementRef) {}
 
   ngOnInit() {
     this.initKeyboardLayoutMap();
+  }
+
+  ngOnDestroy() {
+    // Ensure shortcuts are resumed if component is destroyed while recording
+    if (this.isRecording) {
+      this.resumeGlobalShortcuts();
+    }
   }
 
   private async initKeyboardLayoutMap() {
@@ -66,18 +70,34 @@ export class ShortcutRecorderComponent implements ControlValueAccessor, OnInit {
     }
   }
 
+  private async suspendGlobalShortcuts() {
+    if (window.electronAPI) {
+      await window.electronAPI.suspendShortcuts();
+    }
+  }
+
+  private async resumeGlobalShortcuts() {
+    if (window.electronAPI) {
+      await window.electronAPI.resumeShortcuts();
+    }
+  }
+
   // --- Interaction Logic ---
 
-  startRecording(event: MouseEvent): void {
+  async startRecording(event: MouseEvent): Promise<void> {
     if (this.isDisabled) return;
-
+    
     event.stopPropagation(); // Prevent immediate closing if we had a click-outside logic
+    
+    await this.suspendGlobalShortcuts();
+    
     this.isRecording = true;
     this.onTouched();
   }
 
-  stopRecording(): void {
+  async stopRecording(): Promise<void> {
     this.isRecording = false;
+    await this.resumeGlobalShortcuts();
   }
 
   clearShortcut(event: MouseEvent): void {

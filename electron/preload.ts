@@ -14,7 +14,9 @@ const IPC_CHANNELS = {
   SELECTION_CANCELLED: 'selection-cancelled',
   DISPLAY_BOUNDS: 'display-bounds',
   REQUEST_DISPLAY_BOUNDS: 'request-display-bounds',
-  LOG_MESSAGE: 'log-message'
+  LOG_MESSAGE: 'log-message',
+  SUSPEND_SHORTCUTS: 'suspend-shortcuts',
+  RESUME_SHORTCUTS: 'resume-shortcuts',
 } as const;
 
 // Redefine types locally for the preload script
@@ -49,6 +51,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Shortcuts operations
   getShortcuts: () => ipcRenderer.invoke(IPC_CHANNELS.GET_SHORTCUTS),
   setShortcuts: (shortcuts: any) => ipcRenderer.invoke(IPC_CHANNELS.SET_SHORTCUTS, shortcuts),
+  suspendShortcuts: () => ipcRenderer.invoke(IPC_CHANNELS.SUSPEND_SHORTCUTS),
+  resumeShortcuts: () => ipcRenderer.invoke(IPC_CHANNELS.RESUME_SHORTCUTS),
 
   // Overlay / Screenshot operations
   sendSelection: (selection: SelectionArea) => ipcRenderer.send(IPC_CHANNELS.SELECTION_MADE, selection),

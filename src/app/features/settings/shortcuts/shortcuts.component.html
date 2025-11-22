@@ -98,7 +98,7 @@
   <app-shortcut-editor
     [visible]="isEditorVisible"
     [shortcutData]="selectedShortcutForEdit"
-    [existingNames]="getExistingNames()"
+    [existingShortcuts]="shortcuts"
     (save)="handleSave($event)"
     (cancel)="isEditorVisible = false">
   </app-shortcut-editor>

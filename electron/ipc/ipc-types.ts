@@ -54,4 +54,6 @@ export const IPC_CHANNELS = {
   DISPLAY_BOUNDS: 'display-bounds',
   REQUEST_DISPLAY_BOUNDS: 'request-display-bounds',
   LOG_MESSAGE: 'log-message',
+  SUSPEND_SHORTCUTS: 'suspend-shortcuts',
+  RESUME_SHORTCUTS: 'resume-shortcuts',
 } as const;
