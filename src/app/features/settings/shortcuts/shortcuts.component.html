@@ -1,6 +1,6 @@
 <div class="p-4 max-w-5xl mx-auto">
   <p-toast position="bottom-right"></p-toast>
-  <p-confirmDialog></p-confirmDialog>
+  <p-confirmpopup/>
 
   <div class="flex justify-between items-center mb-4">
     <div>
@@ -67,7 +67,7 @@
                 [rounded]="true"
                 pTooltip="Delete shortcut"
                 [tooltipOptions]="tooltipOption"
-                (onClick)="confirmDelete(shortcut, shortcuts.indexOf(shortcut))">
+                (onClick)="confirmDelete($event, shortcut, shortcuts.indexOf(shortcut))">
               </p-button>
             </div>
           </div>
@@ -102,10 +102,12 @@
 
   <div class="flex justify-end mt-4">
     <p-button
+      size="small"
       label="Reset to Default"
       icon="pi pi-refresh"
-      severity="secondary"
-      (onClick)="confirmResetToDefault()">
+      variant="text"
+      severity="danger"
+      (onClick)="confirmResetToDefault($event)">
     </p-button>
   </div>
 </div>

@@ -9,7 +9,8 @@ import { Card } from 'primeng/card';
 import { Button } from 'primeng/button';
 import { Tag } from 'primeng/tag';
 import { Toast } from 'primeng/toast';
-import { ConfirmDialog } from 'primeng/confirmdialog';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
+
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService, MessageService, PrimeTemplate, TooltipOptions } from 'primeng/api';
 
@@ -29,7 +30,7 @@ import { type ShortcutConfig } from '../../../../types';
     Button,
     Tag,
     Toast,
-    ConfirmDialog,
+    ConfirmPopupModule,
     TooltipModule,
     ShortcutEditorComponent,
     PrimeTemplate
@@ -136,11 +137,20 @@ export class ShortcutsComponent implements OnInit {
     await this.saveToElectron();
   }
 
-  confirmDelete(shortcut: ShortcutConfig, index: number) {
+  confirmDelete(event: Event, shortcut: ShortcutConfig, index: number) {
     this.confirmationService.confirm({
+      target: event.target as EventTarget,
       message: `Delete "${shortcut.name}"?`,
-      header: 'Confirm Deletion',
       icon: 'pi pi-exclamation-triangle',
+      rejectButtonProps: {
+        label: 'Cancel',
+        severity: 'secondary',
+        outlined: true
+      },
+      acceptButtonProps: {
+        label: 'Yes delete',
+        severity: 'danger',
+      },
       accept: async () => {
         this.shortcuts = this.shortcuts.filter((_, i) => i !== index);
         this.messageService.add({
@@ -176,11 +186,21 @@ export class ShortcutsComponent implements OnInit {
     }
   }
 
-  confirmResetToDefault() {
+  confirmResetToDefault(event: Event) {
     this.confirmationService.confirm({
+      target: event.target as EventTarget,
       message: 'Are you sure you want to reset all shortcuts to their default values? This action cannot be undone.',
-      header: 'Confirm Reset',
       icon: 'pi pi-exclamation-triangle',
+      position: 'left',
+      rejectButtonProps: {
+        label: 'Cancel',
+        severity: 'secondary',
+        outlined: true
+      },
+      acceptButtonProps: {
+        label: 'Yes reset',
+        severity: 'danger',
+      },
       accept: async () => {
         await this.resetToDefault();
       }
