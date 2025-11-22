@@ -1,14 +1,39 @@
 <div class="p-4">
-  <p-card header="Keyboard Shortcuts">
+  <p-card header="Keyboard Shortcuts" subheader="View your current AI utility bindings">
     <div class="space-y-4">
+
       @for (shortcut of shortcuts; track shortcut.key) {
-        <div class="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0">
-          <span class="text-gray-700">{{ shortcut.description }}</span>
-          <kbd class="px-3 py-1.5 text-sm font-semibold text-gray-800 bg-gray-100 border border-gray-300 rounded-lg shadow-sm">
-            {{ shortcut.key }}
-          </kbd>
+        <div class="flex flex-col gap-2 py-4 border-b border-gray-200 last:border-b-0">
+
+          <div class="flex items-start justify-between">
+            <div class="flex items-center gap-2">
+              @if (shortcut.inputType === 'image') {
+                <p-tag icon="pi pi-camera" severity="warn" value="Image" pTooltip="Uses Screenshot"></p-tag>
+              } @else {
+                <p-tag icon="pi pi-file-edit" severity="info" value="Text" pTooltip="Uses Clipboard Text"></p-tag>
+              }
+              <span class="text-lg font-medium text-gray-800">{{ shortcut.description }}</span>
+            </div>
+
+            <kbd class="px-3 py-1.5 text-sm font-bold text-gray-800 bg-gray-100 border border-gray-300 rounded-lg shadow-sm whitespace-nowrap">
+              {{ shortcut.key }}
+            </kbd>
+          </div>
+
+          <div class="pl-1 text-sm text-gray-500 bg-gray-50 p-2 rounded border border-gray-100 mt-1">
+            <span class="font-semibold text-xs uppercase tracking-wide text-gray-400">AI Prompt:</span>
+            <span class="italic ml-2">"{{ shortcut.prompt }}"</span>
+          </div>
+
         </div>
       }
+
+      @if (shortcuts.length === 0) {
+        <div class="text-center py-8 text-gray-500">
+          Loading shortcuts...
+        </div>
+      }
+
     </div>
   </p-card>
 </div>

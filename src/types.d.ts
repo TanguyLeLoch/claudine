@@ -1,3 +1,11 @@
+export interface ShortcutConfig {
+  key: string;
+  name: string;
+  description: string;
+  prompt: string;
+  inputType: 'text' | 'image';
+}
+
 export interface SelectionArea {
   x: number;
   y: number;
@@ -22,6 +30,10 @@ export interface IElectronAPI {
   getProvider: () => Promise<'gemini' | 'gpt'>;
   setProvider: (provider: 'gemini' | 'gpt') => Promise<void>;
   closeSettings: () => void;
+
+  // Shortcuts
+  getShortcuts: () => Promise<ShortcutConfig[]>;
+  setShortcuts: (shortcuts: ShortcutConfig[]) => Promise<void>;
 
   // Overlay / Screenshot
   sendSelection: (selection: SelectionArea) => void;

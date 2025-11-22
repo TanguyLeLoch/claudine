@@ -7,6 +7,8 @@ const IPC_CHANNELS = {
   SET_API_KEY: 'set-api-key',
   GET_PROVIDER: 'get-provider',
   SET_PROVIDER: 'set-provider',
+  GET_SHORTCUTS: 'get-shortcuts',
+  SET_SHORTCUTS: 'set-shortcuts',
   CLOSE_SETTINGS: 'close-settings',
   SELECTION_MADE: 'selection-made',
   SELECTION_CANCELLED: 'selection-cancelled',
@@ -43,6 +45,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getProvider: () => ipcRenderer.invoke(IPC_CHANNELS.GET_PROVIDER),
   setProvider: (provider: string) => ipcRenderer.invoke(IPC_CHANNELS.SET_PROVIDER, provider),
   closeSettings: () => ipcRenderer.send(IPC_CHANNELS.CLOSE_SETTINGS),
+
+  // Shortcuts operations
+  getShortcuts: () => ipcRenderer.invoke(IPC_CHANNELS.GET_SHORTCUTS),
+  setShortcuts: (shortcuts: any) => ipcRenderer.invoke(IPC_CHANNELS.SET_SHORTCUTS, shortcuts),
 
   // Overlay / Screenshot operations
   sendSelection: (selection: SelectionArea) => ipcRenderer.send(IPC_CHANNELS.SELECTION_MADE, selection),

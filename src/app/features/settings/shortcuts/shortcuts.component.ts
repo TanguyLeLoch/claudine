@@ -1,24 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Card } from 'primeng/card';
-
-interface Shortcut {
-  key: string;
-  description: string;
-}
+import { Tag } from 'primeng/tag';
+import { Tooltip } from 'primeng/tooltip';
+import { type ShortcutConfig } from '../../../../types';
 
 @Component({
   selector: 'app-shortcuts',
   standalone: true,
-  imports: [CommonModule, Card],
+  imports: [CommonModule, Card, Tag, Tooltip],
   templateUrl: './shortcuts.component.html',
   styleUrl: './shortcuts.component.scss'
 })
-export class ShortcutsComponent {
-  shortcuts: Shortcut[] = [
-    { key: 'Alt+F1', description: 'Fix typos and grammar' },
-    { key: 'Alt+F2', description: 'Translate to English' },
-    { key: 'Alt+F3', description: 'Translate to French' },
-    { key: 'Alt+Shift+F2', description: 'Screenshot OCR - Extract text from screen area' }
-  ];
+export class ShortcutsComponent implements OnInit {
+  shortcuts: ShortcutConfig[] = [];
+
+  async ngOnInit() {
+    if (window.electronAPI) {
+      try {
+        this.shortcuts = await window.electronAPI.getShortcuts();
+        console.log('Shortcuts loaded:', this.shortcuts);
+      } catch (error) {
+        console.error('Failed to load shortcuts:', error);
+      }
+    }
+  }
 }

@@ -3,7 +3,7 @@
  */
 
 import { ipcMain } from 'electron';
-import { configStore } from '../services/config-store';
+import { configStore, type ShortcutConfig } from '../services/config-store';
 import { getSettingsWindow } from '../windows/settings-window';
 import { IPC_CHANNELS } from './ipc-types';
 import { logger } from '../utils/logger';
@@ -26,6 +26,14 @@ export const setupIpcHandlers = (): void => {
 
   ipcMain.handle(IPC_CHANNELS.SET_PROVIDER, (_, provider: 'gemini' | 'gpt') => {
     configStore.setProvider(provider);
+  });
+
+  ipcMain.handle(IPC_CHANNELS.GET_SHORTCUTS, () => {
+    return configStore.getShortcuts();
+  });
+
+  ipcMain.handle(IPC_CHANNELS.SET_SHORTCUTS, (_, shortcuts: ShortcutConfig[]) => {
+    configStore.setShortcuts(shortcuts);
   });
 
   ipcMain.on(IPC_CHANNELS.CLOSE_SETTINGS, () => {

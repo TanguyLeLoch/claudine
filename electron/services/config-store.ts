@@ -1,12 +1,58 @@
 import Store, { type Schema } from 'electron-store';
 
 /**
+ * Shortcut configuration interface
+ */
+export interface ShortcutConfig {
+  key: string;
+  name: string;
+  description: string;
+  prompt: string;
+  inputType: 'text' | 'image';
+}
+
+/**
  * Application configuration schema
  */
 type ConfigSchema = {
   apiKey: string;
   provider: 'gemini' | 'gpt';
+  shortcuts: ShortcutConfig[];
 };
+
+/**
+ * Default shortcuts configuration
+ */
+const DEFAULT_SHORTCUTS: ShortcutConfig[] = [
+  {
+    key: 'Alt+F1',
+    name: 'fixTypos',
+    description: 'Fix typos and grammar',
+    prompt: 'Fix any typos and grammar mistakes in the following text. Return ONLY the corrected text without any explanations or additional comments:',
+    inputType: 'text'
+  },
+  {
+    key: 'Alt+F2',
+    name: 'translateToEnglish',
+    description: 'Translate to English',
+    prompt: 'Translate the following text to ENGLISH. Return ONLY the translated text without any explanations or additional comments:',
+    inputType: 'text'
+  },
+  {
+    key: 'Alt+F3',
+    name: 'translateToFrench',
+    description: 'Translate to French',
+    prompt: 'Translate the following text to FRENCH. Return ONLY the translated text without any explanations or additional comments:',
+    inputType: 'text'
+  },
+  {
+    key: 'Alt+Shift+F2',
+    name: 'screenshotOCR',
+    description: 'Screenshot OCR - Extract text from screen area',
+    prompt: 'Extract all text from this image. Return ONLY the extracted text, maintaining the original layout and structure as much as possible.',
+    inputType: 'image'
+  }
+];
 
 const schema: Schema<ConfigSchema> = {
   apiKey: {
@@ -17,6 +63,20 @@ const schema: Schema<ConfigSchema> = {
     type: 'string',
     default: 'gemini',
   },
+  shortcuts: {
+    type: 'array',
+    default: DEFAULT_SHORTCUTS,
+    items: {
+      type: 'object',
+      properties: {
+        key: { type: 'string' },
+        name: { type: 'string' },
+        description: { type: 'string' },
+        prompt: { type: 'string' },
+        inputType: { type: 'string', enum: ['text', 'image'] }
+      }
+    }
+  }
 };
 
 /**
@@ -67,6 +127,20 @@ export class ConfigStore {
   hasApiKey(): boolean {
     const apiKey = this.getApiKey();
     return apiKey !== null && apiKey !== undefined && apiKey.trim() !== '';
+  }
+
+  /**
+   * Get shortcuts configuration
+   */
+  getShortcuts(): ShortcutConfig[] {
+    return this.store.get('shortcuts') as ShortcutConfig[];
+  }
+
+  /**
+   * Set shortcuts configuration
+   */
+  setShortcuts(shortcuts: ShortcutConfig[]): void {
+    this.store.set('shortcuts', shortcuts);
   }
 }
 
