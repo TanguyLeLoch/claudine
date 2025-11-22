@@ -6,6 +6,9 @@ let toastShownAt: number | null = null;
 let processingComplete = false;
 
 const MIN_DISPLAY_DURATION = 3000; // 3 seconds minimum
+const TOAST_WIDTH = 500;
+const TOAST_HEIGHT = 300;
+const TOAST_PADDING = 20;
 
 export const createToastWindow = (): void => {
   if (toastWindow) {
@@ -15,12 +18,12 @@ export const createToastWindow = (): void => {
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
 
-  // Create a small window in the bottom-right corner
+  // Create a small window in the top-right corner
   toastWindow = new BrowserWindow({
-    width: 500,
-    height: 150,
-    x: width - 520,
-    y: 20,
+    width: TOAST_WIDTH,
+    height: TOAST_HEIGHT,
+    x: width - TOAST_WIDTH - TOAST_PADDING,
+    y: TOAST_PADDING,
     frame: false,
     transparent: true,
     alwaysOnTop: true,
@@ -63,18 +66,6 @@ export const showToast = (message: string, options?: {
   }
 
   if (toastWindow) {
-    // Reposition window to current primary display
-    const primaryDisplay = screen.getPrimaryDisplay();
-    const { x, y, width } = primaryDisplay.workArea;
-
-    // Calculate position: Top-right of work area
-    toastWindow.setBounds({
-      x: x + width - 420, // 400px width approx + 20px padding
-      y: y + 20,
-      width: 400,         // Resize to be smaller/fitter
-      height: 150         // Resize to be smaller/fitter
-    });
-
     const send = () => {
       toastShownAt = Date.now();
       processingComplete = false;
