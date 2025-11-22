@@ -1,15 +1,20 @@
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  Renderer2,
-  forwardRef,
-  signal
-} from '@angular/core';
+import { Component, ElementRef, forwardRef, HostListener, OnInit, Renderer2, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
-import { PrimeIcons } from 'primeng/api';
+
+// Define types for the Keyboard API
+interface KeyboardLayoutMap {
+  get(key: string): string | undefined;
+}
+
+declare global {
+  interface Navigator {
+    keyboard?: {
+      getLayoutMap(): Promise<KeyboardLayoutMap>;
+    };
+  }
+}
 
 @Component({
   selector: 'app-shortcut-recorder',
@@ -25,26 +30,47 @@ import { PrimeIcons } from 'primeng/api';
     },
   ],
 })
-export class ShortcutRecorderComponent implements ControlValueAccessor {
+export class ShortcutRecorderComponent implements ControlValueAccessor, OnInit {
   // Internal state
   value: string = '';
   isRecording = false;
   isDisabled = false;
-  
+
   // To display keys visually split by '+'
   displayKeys = signal<string[]>([]);
 
-  // CVA callbacks
-  onChange: (value: string) => void = () => {};
-  onTouched: () => void = () => {};
+  // Keyboard layout map for mapping codes to characters
+  private keyboardLayoutMap: KeyboardLayoutMap | null = null;
 
-  constructor(private renderer: Renderer2, private el: ElementRef) {}
+  // CVA callbacks
+  onChange: (value: string) => void = () => {
+  };
+  onTouched: () => void = () => {
+  };
+
+  constructor(private renderer: Renderer2, private el: ElementRef) {
+  }
+
+  ngOnInit() {
+    this.initKeyboardLayoutMap();
+  }
+
+  private async initKeyboardLayoutMap() {
+    if (navigator.keyboard) {
+      try {
+        this.keyboardLayoutMap = await navigator.keyboard.getLayoutMap();
+        console.log('Keyboard layout map loaded');
+      } catch (err) {
+        console.warn('Failed to get keyboard layout map:', err);
+      }
+    }
+  }
 
   // --- Interaction Logic ---
 
   startRecording(event: MouseEvent): void {
     if (this.isDisabled) return;
-    
+
     event.stopPropagation(); // Prevent immediate closing if we had a click-outside logic
     this.isRecording = true;
     this.onTouched();
@@ -82,18 +108,18 @@ export class ShortcutRecorderComponent implements ControlValueAccessor {
 
     // 2. Identify the Trigger Key
     const key = event.key;
-    
+
     // We only want to stop recording and save if a "non-modifier" key is pressed.
     // If the user is just holding "Ctrl", we wait.
-    const isModifierKey = ['Control', 'Shift', 'Alt', 'Meta', 'OS'].includes(key);
+    const isModifierKey = ['Control', 'Shift', 'Alt', 'Meta', 'OS', 'AltGraph'].includes(key);
 
     if (!isModifierKey) {
       // Normalize the key for Electron (e.g., ArrowUp -> Up, " " -> Space)
       const normalizedKey = this.normalizeKeyForElectron(key, event.code);
-      
+
       // Combine modifiers + key
       const finalShortcut = [...modifiers, normalizedKey].join('+');
-      
+
       this.updateValue(finalShortcut);
       this.stopRecording();
     }
@@ -105,7 +131,7 @@ export class ShortcutRecorderComponent implements ControlValueAccessor {
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent): void {
     if (!this.isRecording) return;
-    
+
     // If click is outside this component, stop recording
     if (!this.el.nativeElement.contains(event.target)) {
       this.stopRecording();
@@ -124,10 +150,7 @@ export class ShortcutRecorderComponent implements ControlValueAccessor {
     // 1. Handle Function Keys (F1-F12) -> pass through as uppercase
     if (/^F\d+$/.test(key)) return key.toUpperCase();
 
-    // 2. Handle Letters (a -> A)
-    if (key.length === 1) return key.toUpperCase();
-
-    // 3. Map Special Keys to Electron names
+    // 2. Map Special Keys to Electron names
     const map: { [k: string]: string } = {
       ' ': 'Space',
       'ArrowUp': 'Up',
@@ -144,16 +167,35 @@ export class ShortcutRecorderComponent implements ControlValueAccessor {
       'Tab': 'Tab',
       'Enter': 'Return',
       'Backspace': 'Backspace',
-      'Plus': 'Plus' // Be careful with NumpadAdd vs +
+      'Plus': 'Plus'
     };
 
     if (map[key]) return map[key];
 
-    // Fallback: if code is "Digit1", return "1"
-    if (code.startsWith('Digit')) return code.replace('Digit', '');
-    if (code.startsWith('Key')) return code.replace('Key', '').toUpperCase();
+    // 3. Handle Digits (Digit0 - Digit9) -> Always return the number
+    // This ensures that even if Shift is required (like on AZERTY), we get '1' for Digit1
+    if (code.startsWith('Digit')) {
+      return code.replace('Digit', '');
+    }
 
-    return key.toUpperCase(); // Default fallback
+    // 4. Handle Letters (KeyA - KeyZ) -> Use Layout Map
+    if (code.startsWith('Key')) {
+      if (this.keyboardLayoutMap) {
+        const layoutChar = this.keyboardLayoutMap.get(code);
+        if (layoutChar) {
+          return layoutChar.toUpperCase();
+        }
+      }
+      // Fallback: if map not available or key not found
+      // This might be wrong for AZERTY if map fails, but better than nothing
+      return code.replace('Key', '').toUpperCase();
+    }
+
+    // 5. Fallback for other keys (punctuation etc.)
+    // If we have a single char produced by the key event, prefer uppercase
+    if (key.length === 1) return key.toUpperCase();
+
+    return key;
   }
 
   // --- ControlValueAccessor Implementation ---
