@@ -39,12 +39,13 @@ export const createToastWindow = (): void => {
   const isDev = !app.isPackaged || process.argv.includes('--dev');
 
   if (isDev) {
-    // Development mode - use Angular dev server on port 4201
-    toastWindow.loadURL('http://localhost:4201');
+    // Development mode - use Angular dev server on port 4200
+    toastWindow.loadURL('http://localhost:4200/#/toast');
     // toastWindow.webContents.openDevTools();
   } else {
     // Production mode - use built files
-    toastWindow.loadFile(path.join(__dirname, '../toast/browser/index.html'));
+    const indexPath = path.join(__dirname, '../../claudine/browser/index.html');
+    toastWindow.loadFile(indexPath, { hash: 'toast' });
   }
 
   toastWindow.on('closed', () => {
@@ -58,11 +59,18 @@ export const showToast = (message: string): void => {
   }
 
   if (toastWindow) {
-    toastShownAt = Date.now();
-    processingComplete = false;
+    const send = () => {
+        toastShownAt = Date.now();
+        processingComplete = false;
+        toastWindow?.webContents.send('show-toast', message);
+        toastWindow?.showInactive();
+    };
 
-    toastWindow.webContents.send('show-toast', message);
-    toastWindow.showInactive();
+    if (toastWindow.webContents.isLoading()) {
+        toastWindow.webContents.once('did-finish-load', send);
+    } else {
+        send();
+    }
   }
 };
 

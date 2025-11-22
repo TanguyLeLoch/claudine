@@ -8,7 +8,8 @@ import { configStore } from '../services/config-store';
 import { AIProviderFactory } from '../services/ai-provider';
 import { sleep } from '../utils/helpers';
 import { createSettingsWindow } from '../windows/settings-window';
-import { showToast, hideToast } from '../toast/toast-window-manager';
+import { showToast, hideToast } from '../windows/toast-window';
+import { logger } from '../utils/logger';
 
 export type TextOperation = 'fixTypos' | 'translateToEnglish' | 'translateToFrench';
 
@@ -27,7 +28,7 @@ export const processText = async (operation: TextOperation): Promise<void> => {
 
     // Save original clipboard
     const originalClipboard = clipboard.readText();
-    console.log("originalClipboard", originalClipboard);
+    logger.debug("originalClipboard: " + originalClipboard);
     // Simulate copy (Cmd+C on Mac, Ctrl+C elsewhere)
     const modifierKey = process.platform === 'darwin' ? Key.LeftSuper : Key.LeftControl;
     await keyboard.type(modifierKey, Key.C);
@@ -75,14 +76,14 @@ export const processText = async (operation: TextOperation): Promise<void> => {
         break;
     }
 
-    console.log(result);
+    logger.debug("AI Result: " + result);
 
     // Write result to clipboard
     clipboard.writeText(result);
 
     // Auto-paste the result
     await sleep(100);
-    console.log(`will try to ${process.platform === 'darwin' ? 'Cmd' : 'Ctrl'} + v the response ${result}`);
+    logger.info(`Auto-pasting response (attempting ${process.platform === 'darwin' ? 'Cmd' : 'Ctrl'} + V)`);
     await keyboard.type(modifierKey, Key.V);
 
     // Restore original clipboard after a delay
@@ -94,6 +95,7 @@ export const processText = async (operation: TextOperation): Promise<void> => {
 
   } catch (error) {
     hideToast();
+    logger.error('Processing Error', error);
     dialog.showErrorBox('Processing Error', error instanceof Error ? error.message : 'Unknown error');
   }
 };

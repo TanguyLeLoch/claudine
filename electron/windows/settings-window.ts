@@ -32,12 +32,12 @@ export const createSettingsWindow = (): void => {
 
   if (isDev) {
     // Development mode - use Angular dev server for hot reloading
-    settingsWindow.loadURL('http://localhost:4200');
+    settingsWindow.loadURL('http://localhost:4200/#/settings');
   } else {
     // Production mode - use built files
     // __dirname is app.asar/dist/electron/windows, so ../../ goes to app.asar/dist
     const indexPath = path.join(__dirname, '../../claudine/browser/index.html');
-    settingsWindow.loadFile(indexPath);
+    settingsWindow.loadFile(indexPath, { hash: 'settings' });
   }
 
   // Open DevTools for debugging in dev mode

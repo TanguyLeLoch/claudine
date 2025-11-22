@@ -1,11 +1,25 @@
 import { Routes } from '@angular/router';
-import { ShortcutsComponent } from './shortcuts/shortcuts.component';
-import { SettingsComponent } from './settings/settings.component';
-import { LogsComponent } from './logs/logs.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'shortcuts', pathMatch: 'full' },
-  { path: 'shortcuts', component: ShortcutsComponent },
-  { path: 'settings', component: SettingsComponent },
-  { path: 'logs', component: LogsComponent }
+  {
+    path: 'settings',
+    loadComponent: () => import('./features/settings/settings.component').then(m => m.SettingsComponent)
+  },
+  {
+    path: 'overlay',
+    loadComponent: () => import('./features/overlay/overlay.component').then(m => m.OverlayComponent)
+  },
+  {
+    path: 'toast',
+    loadComponent: () => import('./features/toast/toast.component').then(m => m.ToastComponent)
+  },
+  {
+    path: 'launcher',
+    loadComponent: () => import('./features/launcher/launcher.component').then(m => m.LauncherComponent)
+  },
+  {
+    path: '',
+    redirectTo: 'settings',
+    pathMatch: 'full'
+  }
 ];

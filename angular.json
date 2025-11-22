@@ -93,63 +93,6 @@
           }
         }
       }
-    },
-    "toast-overlay": {
-      "projectType": "application",
-      "root": "",
-      "sourceRoot": "src/toast",
-      "prefix": "toast",
-      "architect": {
-        "build": {
-          "builder": "@angular/build:application",
-          "options": {
-            "outputPath": "dist/toast",
-            "index": "src/toast/index.html",
-            "browser": "src/toast/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
-            "tsConfig": "tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
-            "styles": [
-              "src/styles.scss"
-            ]
-          },
-          "configurations": {
-            "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
-                }
-              ],
-              "outputHashing": "all"
-            },
-            "development": {
-              "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "serve": {
-          "builder": "@angular/build:dev-server",
-          "options": {
-            "port": 4201
-          },
-          "configurations": {
-            "production": {
-              "buildTarget": "toast-overlay:build:production"
-            },
-            "development": {
-              "buildTarget": "toast-overlay:build:development"
-            }
-          },
-          "defaultConfiguration": "development"
-        }
-      }
     }
   }
 }

@@ -1,5 +1,21 @@
-@use "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@plugin "tailwindcss-primeui";
-@import "primeicons/primeicons.css";
+/* Global Styles */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  /* Critical for Electron transparency */
+  background: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow: hidden; /* Prevent scrollbars by default */
+}
 
+/* Allow components to control their own background and scrolling */
+app-settings, app-overlay, app-toast, app-launcher {
+  display: block;
+  height: 100%;
+  width: 100%;
+}

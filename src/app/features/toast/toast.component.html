@@ -1,0 +1,19 @@
+<div *ngIf="isVisible" class="flex items-center bg-white/95 backdrop-blur-sm p-3 rounded-lg shadow-xl m-2 border-l-4 border-green-500 animate-slide-in-down">
+  <div class="flex-shrink-0 bg-green-100 text-green-600 w-6 h-6 rounded-full flex items-center justify-center mr-3 font-bold">
+    ✓
+  </div>
+  <div class="flex-grow">
+    <div class="font-semibold text-sm text-gray-800">Success</div>
+    <div class="text-xs text-gray-600">{{ message }}</div>
+  </div>
+</div>
+
+<style>
+  @keyframes slide-in-down {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .animate-slide-in-down {
+    animation: slide-in-down 0.3s ease-out forwards;
+  }
+</style>
