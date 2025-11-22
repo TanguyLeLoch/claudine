@@ -26,6 +26,7 @@ export interface IElectronAPI {
   // Overlay / Screenshot
   sendSelection: (selection: SelectionArea) => void;
   cancelSelection: () => void;
+  requestDisplayBounds: () => void;
   onDisplayBounds: (callback: (bounds: DisplayBounds) => void) => void;
 
   // Toast

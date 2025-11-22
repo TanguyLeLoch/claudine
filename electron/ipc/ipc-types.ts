@@ -50,5 +50,6 @@ export const IPC_CHANNELS = {
   SELECTION_MADE: 'selection-made',
   SELECTION_CANCELLED: 'selection-cancelled',
   DISPLAY_BOUNDS: 'display-bounds',
+  REQUEST_DISPLAY_BOUNDS: 'request-display-bounds',
   LOG_MESSAGE: 'log-message',
 } as const;

@@ -11,6 +11,7 @@ const IPC_CHANNELS = {
   SELECTION_MADE: 'selection-made',
   SELECTION_CANCELLED: 'selection-cancelled',
   DISPLAY_BOUNDS: 'display-bounds',
+  REQUEST_DISPLAY_BOUNDS: 'request-display-bounds',
   LOG_MESSAGE: 'log-message'
 } as const;
 
@@ -46,6 +47,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Overlay / Screenshot operations
   sendSelection: (selection: SelectionArea) => ipcRenderer.send(IPC_CHANNELS.SELECTION_MADE, selection),
   cancelSelection: () => ipcRenderer.send(IPC_CHANNELS.SELECTION_CANCELLED),
+  requestDisplayBounds: () => ipcRenderer.send(IPC_CHANNELS.REQUEST_DISPLAY_BOUNDS),
   onDisplayBounds: (callback: (bounds: DisplayBounds) => void) => {
     ipcRenderer.on(IPC_CHANNELS.DISPLAY_BOUNDS, (_event, bounds) => callback(bounds));
   },

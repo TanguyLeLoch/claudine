@@ -12,10 +12,18 @@ import { LoggerService } from '../../core/services/logger.service';
 })
 export class OverlayComponent implements OnInit {
   isSelecting = false;
+  // Visual coordinates (relative to window/viewport)
   startX = 0;
   startY = 0;
   currentX = 0;
   currentY = 0;
+  
+  // Screen coordinates (absolute global)
+  startScreenX = 0;
+  startScreenY = 0;
+  currentScreenX = 0;
+  currentScreenY = 0;
+
   selectionBox = { left: 0, top: 0, width: 0, height: 0 };
   
   displayId: number | null = null;
@@ -38,6 +46,8 @@ export class OverlayComponent implements OnInit {
           this.displayId = bounds.id;
         });
       });
+      // Request bounds immediately
+      window.electronAPI.requestDisplayBounds();
     } else {
       this.logger.warn('Overlay: window.electronAPI not available');
     }
@@ -48,10 +58,18 @@ export class OverlayComponent implements OnInit {
     if (event.button !== 0) return; // Only left click
 
     this.isSelecting = true;
+    // Capture visual coords
     this.startX = event.clientX;
     this.startY = event.clientY;
     this.currentX = event.clientX;
     this.currentY = event.clientY;
+    
+    // Capture global screen coords
+    this.startScreenX = event.screenX;
+    this.startScreenY = event.screenY;
+    this.currentScreenX = event.screenX;
+    this.currentScreenY = event.screenY;
+
     this.updateSelectionBox();
   }
 
@@ -61,6 +79,10 @@ export class OverlayComponent implements OnInit {
 
     this.currentX = event.clientX;
     this.currentY = event.clientY;
+    
+    this.currentScreenX = event.screenX;
+    this.currentScreenY = event.screenY;
+
     this.updateSelectionBox();
   }
 
@@ -89,8 +111,8 @@ export class OverlayComponent implements OnInit {
   }
 
   finishSelection() {
-    if (!this.displayId) {
-      this.logger.error('Overlay: No display ID available for selection. Display bounds might not have been received yet.');
+    if (!this.displayId || !this.displayBounds) {
+      this.logger.error('Overlay: No display ID/Bounds available for selection.');
       return;
     }
 
@@ -99,11 +121,17 @@ export class OverlayComponent implements OnInit {
         return;
     }
     
+    // Calculate coordinates relative to the display using global screen coordinates
+    const minScreenX = Math.min(this.startScreenX, this.currentScreenX);
+    const minScreenY = Math.min(this.startScreenY, this.currentScreenY);
+    const width = Math.abs(this.currentScreenX - this.startScreenX);
+    const height = Math.abs(this.currentScreenY - this.startScreenY);
+
     const selection: SelectionArea = {
-      x: Math.round(this.selectionBox.left),
-      y: Math.round(this.selectionBox.top),
-      width: Math.round(this.selectionBox.width),
-      height: Math.round(this.selectionBox.height),
+      x: Math.round(minScreenX - this.displayBounds.offsetX),
+      y: Math.round(minScreenY - this.displayBounds.offsetY),
+      width: Math.round(width),
+      height: Math.round(height),
       displayId: this.displayId
     };
 
@@ -112,7 +140,6 @@ export class OverlayComponent implements OnInit {
         window.electronAPI.sendSelection(selection);
     }
   }
-
   cancelSelection() {
     this.logger.info('Overlay: Selection cancelled.');
     if (window.electronAPI) {

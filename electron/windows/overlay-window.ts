@@ -1,6 +1,6 @@
 import { BrowserWindow, screen, ipcMain, app } from 'electron';
 import path from 'node:path';
-import { IPC_CHANNELS } from '../ipc/ipc-types';
+import { IPC_CHANNELS, DisplayBounds } from '../ipc/ipc-types';
 import { logger } from '../utils/logger';
 
 export type SelectionArea = {
@@ -9,15 +9,6 @@ export type SelectionArea = {
   width: number;
   height: number;
   displayId: number; // ID of the display where selection was made
-};
-
-export type DisplayBounds = {
-  id: number;
-  offsetX: number;
-  offsetY: number;
-  width: number;
-  height: number;
-  scaleFactor: number;
 };
 
 /**
@@ -30,6 +21,7 @@ export const selectScreenArea = async (): Promise<SelectionArea | null> => {
 
     // Create one overlay window per display
     const selectionWindows: BrowserWindow[] = [];
+    const windowBoundsMap = new Map<number, DisplayBounds>();
 
     const isDev = !app.isPackaged || process.argv.includes('--dev');
 
@@ -55,19 +47,16 @@ export const selectScreenArea = async (): Promise<SelectionArea | null> => {
         },
       });
 
-
-      // Send this display's info to the renderer
-      selectionWindow.webContents.on('did-finish-load', () => {
-        logger.info(`Overlay for display ${id} finished loading. Sending bounds.`);
-        selectionWindow.webContents.send(IPC_CHANNELS.DISPLAY_BOUNDS, {
-          id,
-          offsetX: bounds.x,
-          offsetY: bounds.y,
-          width: bounds.width,
-          height: bounds.height,
-          scaleFactor
-        });
-      });
+      const displayBounds: DisplayBounds = {
+        id,
+        offsetX: bounds.x,
+        offsetY: bounds.y,
+        width: bounds.width,
+        height: bounds.height,
+        scaleFactor
+      };
+      
+      windowBoundsMap.set(selectionWindow.webContents.id, displayBounds);
 
       if (isDev) {
         await selectionWindow.loadURL('http://localhost:4200/#/overlay');
@@ -82,12 +71,26 @@ export const selectScreenArea = async (): Promise<SelectionArea | null> => {
 
     logger.info('All overlay windows created. Waiting for user selection...');
 
+    // Handle requests for bounds from the renderer
+    const boundsRequestHandler = (event: Electron.IpcMainEvent) => {
+        const bounds = windowBoundsMap.get(event.sender.id);
+        if (bounds) {
+            logger.debug(`Sending bounds to window ${event.sender.id}`);
+            event.sender.send(IPC_CHANNELS.DISPLAY_BOUNDS, bounds);
+        } else {
+            logger.warn(`Received bounds request from unknown window ${event.sender.id}`);
+        }
+    };
+    ipcMain.on(IPC_CHANNELS.REQUEST_DISPLAY_BOUNDS, boundsRequestHandler);
+
     // Wait for selection using IPC events from any window
     return new Promise<SelectionArea | null>((resolve) => {
       const cleanup = () => {
         logger.info('Cleaning up overlay windows and listeners.');
         ipcMain.removeListener(IPC_CHANNELS.SELECTION_MADE, handleSelection);
         ipcMain.removeListener(IPC_CHANNELS.SELECTION_CANCELLED, handleCancel);
+        ipcMain.removeListener(IPC_CHANNELS.REQUEST_DISPLAY_BOUNDS, boundsRequestHandler);
+        
         // Close all overlay windows
         selectionWindows.forEach(win => {
           if (!win.isDestroyed()) {
