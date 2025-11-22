@@ -76,7 +76,7 @@ export const captureAndExtractText = async (): Promise<void> => {
     logger.info('Image cropped. Sending to AI...');
 
     // Show toast notification
-    showToast('Extracting text from image...');
+    showToast('Extracting text from image...', { type: 'loading' });
 
     // Create AI provider
     const provider = AIProviderFactory.createProvider({
@@ -93,23 +93,27 @@ export const captureAndExtractText = async (): Promise<void> => {
     // Copy to clipboard
     clipboard.writeText(extractedText);
 
-    // Hide toast notification
-    hideToast();
-
     // Show success notification
+    showToast('Text extracted and copied!', { severity: 'success' });
+    setTimeout(() => hideToast(), 3000);
+
+    /* 
     dialog.showMessageBox({
       type: 'info',
       title: 'OCR Complete',
       message: 'Text extracted and copied to clipboard!',
       buttons: ['OK'],
     });
+    */
 
   } catch (error) {
-    hideToast();
+    showToast('OCR Failed', { severity: 'error' });
+    setTimeout(() => hideToast(), 4000);
+    
     logger.error('Error in captureAndExtractText:', error);
     if (error instanceof Error) {
          logger.error(error.stack);
     }
-    dialog.showErrorBox('OCR Error', error instanceof Error ? error.message : 'Unknown error');
+    // dialog.showErrorBox('OCR Error', error instanceof Error ? error.message : 'Unknown error');
   }
 };

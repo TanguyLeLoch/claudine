@@ -17,9 +17,9 @@ export const createToastWindow = (): void => {
 
   // Create a small window in the bottom-right corner
   toastWindow = new BrowserWindow({
-    width: 800,
-    height: 300,
-    x: width - 820 ,
+    width: 400,
+    height: 150,
+    x: width - 420,
     y: 20,
     frame: false,
     transparent: true,
@@ -53,16 +53,28 @@ export const createToastWindow = (): void => {
   });
 };
 
-export const showToast = (message: string): void => {
+export const showToast = (message: string, options?: { severity?: 'info' | 'success' | 'error' | 'warn', sticky?: boolean, type?: 'loading' | 'simple' }): void => {
   if (!toastWindow) {
     createToastWindow();
   }
 
   if (toastWindow) {
+    // Reposition window to current primary display
+    const primaryDisplay = screen.getPrimaryDisplay();
+    const { x, y, width } = primaryDisplay.workArea;
+    
+    // Calculate position: Top-right of work area
+    toastWindow.setBounds({
+        x: x + width - 420, // 400px width approx + 20px padding
+        y: y + 20,
+        width: 400,         // Resize to be smaller/fitter
+        height: 150         // Resize to be smaller/fitter
+    });
+
     const send = () => {
         toastShownAt = Date.now();
         processingComplete = false;
-        toastWindow?.webContents.send('show-toast', message);
+        toastWindow?.webContents.send('show-toast', message, options);
         toastWindow?.showInactive();
     };
 

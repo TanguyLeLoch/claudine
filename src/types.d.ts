@@ -30,7 +30,7 @@ export interface IElectronAPI {
   onDisplayBounds: (callback: (bounds: DisplayBounds) => void) => void;
 
   // Toast
-  onShowToast: (callback: (message: string) => void) => void;
+  onShowToast: (callback: (message: string, options?: { severity?: 'info' | 'success' | 'error' | 'warn', sticky?: boolean, type?: 'loading' | 'simple' }) => void) => void;
   onHideToast: (callback: () => void) => void;
 
   // Logging

@@ -1,26 +1,46 @@
-<div class="h-screen bg-gray-100 text-gray-800">
-  <div class="p-8 max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold mb-6">Settings</h1>
+<div class="p-4 flex flex-col gap-4">
 
-    <section class="bg-white p-6 rounded-lg shadow-md mb-6">
-      <h2 class="text-2xl font-semibold mb-4">API Configuration</h2>
-      <div class="mb-4">
-        <label for="provider-select" class="block text-sm font-medium text-gray-700 mb-1">Provider</label>
-        <select id="provider-select"
-                class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500">
-          <option>OpenAI</option>
-          <option>Anthropic</option>
-          <option>Gemini</option>
-        </select>
+  <p-message
+    severity="info">
+    Configure your AI provider settings. The API key will be stored securely on your device.
+  </p-message>
+
+  <p-card header="API Configuration2">
+    <div class="space-y-6">
+      <!-- Provider Selection -->
+      <div class="flex flex-col gap-2">
+        <label for="provider" class="font-semibold text-gray-700">AI Provider</label>
+        <p-select
+          inputId="provider"
+          [(ngModel)]="selectedProvider"
+          [options]="providers"
+          optionLabel="label"
+          placeholder="Select a provider"
+          class="w-full">
+        </p-select>
       </div>
-      <div class="mb-4">
-        <label for="api-key-input" class="block text-sm font-medium text-gray-700 mb-1">API Key</label>
-        <input type="password" id="api-key-input"
-               class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500">
+
+      <!-- API Key Input -->
+      <div class="flex flex-col gap-2">
+        <label for="apiKey" class="font-semibold text-gray-700">API Key</label>
+        <input
+          pInputText
+          id="apiKey"
+          type="password"
+          [(ngModel)]="apiKey"
+          placeholder="Enter your API key"
+          class="w-full"/>
       </div>
-    </section>
 
-    <!-- Add more settings sections here as needed -->
-
-  </div>
+      <!-- Save Button -->
+      <div class="flex gap-3 mt-6">
+        <p-button
+          label="Save Settings"
+          icon="pi pi-check"
+          (onClick)="onSave()"
+          styleClass="flex-1">
+        </p-button>
+      </div>
+    </div>
+  </p-card>
 </div>

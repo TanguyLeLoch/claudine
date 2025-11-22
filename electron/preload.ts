@@ -53,8 +53,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
 
   // Toast operations
-  onShowToast: (callback: (message: string) => void) => {
-    ipcRenderer.on('show-toast', (_event, message) => callback(message));
+  onShowToast: (callback: (message: string, options?: any) => void) => {
+    ipcRenderer.on('show-toast', (_event, message, options) => callback(message, options));
   },
   onHideToast: (callback: () => void) => {
     ipcRenderer.on('hide-toast', () => callback());

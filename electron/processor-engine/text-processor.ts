@@ -54,7 +54,7 @@ export const processText = async (operation: TextOperation): Promise<void> => {
       translateToEnglish: 'Translating to English...',
       translateToFrench: 'Translating to French...',
     };
-    showToast(operationMessages[operation]);
+    showToast(operationMessages[operation], { type: 'loading' });
 
     // Create AI provider
     const provider = AIProviderFactory.createProvider({
@@ -90,12 +90,15 @@ export const processText = async (operation: TextOperation): Promise<void> => {
     await sleep(500);
     clipboard.writeText(originalClipboard);
 
-    // Hide toast notification
-    hideToast();
+    // Show success and then hide
+    showToast('Done!', { severity: 'success' });
+    setTimeout(() => hideToast(), 3000);
 
   } catch (error) {
-    hideToast();
+    showToast('Error processing text', { severity: 'error' });
+    setTimeout(() => hideToast(), 4000);
+    
     logger.error('Processing Error', error);
-    dialog.showErrorBox('Processing Error', error instanceof Error ? error.message : 'Unknown error');
+    // dialog.showErrorBox('Processing Error', error instanceof Error ? error.message : 'Unknown error');
   }
 };
