@@ -18,7 +18,7 @@ export class GeminiProvider implements AIProvider {
     const prompt = `Fix any typos and grammar mistakes in the following text. Return ONLY the corrected text without any explanations or additional comments:\n\n${text}`;
     try {
       const result = await this.model.generateContent(prompt);
-      console.log('result' , result);
+      console.log('result', result);
       const response = await result.response;
       return response.text().trim();
     } catch (error) {
@@ -28,7 +28,7 @@ export class GeminiProvider implements AIProvider {
   }
 
   async translateToEnglish(text: string): Promise<string> {
-    const prompt = `Translate the following text to English. Return ONLY the translated text without any explanations or additional comments:\n\n${text}`;
+    const prompt = `Translate the following text to ENGLISH. Return ONLY the translated text without any explanations or additional comments:\n\n${text}`;
 
     try {
       const result = await this.model.generateContent(prompt);
@@ -41,7 +41,7 @@ export class GeminiProvider implements AIProvider {
   }
 
   async translateToFrench(text: string): Promise<string> {
-    const prompt = `Translate the following text to French. Return ONLY the translated text without any explanations or additional comments:\n\n${text}`;
+    const prompt = `Translate the following text to FRENCH. Return ONLY the translated text without any explanations or additional comments:\n\n${text}`;
 
     try {
       const result = await this.model.generateContent(prompt);

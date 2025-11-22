@@ -19,7 +19,6 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'settings',
-    pathMatch: 'full'
+    loadComponent: () => import('./features/empty/empty.component').then(m => m.EmptyComponent)
   }
 ];

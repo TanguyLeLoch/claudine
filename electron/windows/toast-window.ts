@@ -1,4 +1,4 @@
-import { BrowserWindow, screen, app } from 'electron';
+import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'node:path';
 
 let toastWindow: BrowserWindow | null = null;
@@ -17,9 +17,9 @@ export const createToastWindow = (): void => {
 
   // Create a small window in the bottom-right corner
   toastWindow = new BrowserWindow({
-    width: 400,
+    width: 500,
     height: 150,
-    x: width - 420,
+    x: width - 520,
     y: 20,
     frame: false,
     transparent: true,
@@ -53,7 +53,11 @@ export const createToastWindow = (): void => {
   });
 };
 
-export const showToast = (message: string, options?: { severity?: 'info' | 'success' | 'error' | 'warn', sticky?: boolean, type?: 'loading' | 'simple' }): void => {
+export const showToast = (message: string, options?: {
+  severity?: 'info' | 'success' | 'error' | 'warn',
+  sticky?: boolean,
+  type?: 'loading' | 'simple'
+}): void => {
   if (!toastWindow) {
     createToastWindow();
   }
@@ -62,26 +66,26 @@ export const showToast = (message: string, options?: { severity?: 'info' | 'succ
     // Reposition window to current primary display
     const primaryDisplay = screen.getPrimaryDisplay();
     const { x, y, width } = primaryDisplay.workArea;
-    
+
     // Calculate position: Top-right of work area
     toastWindow.setBounds({
-        x: x + width - 420, // 400px width approx + 20px padding
-        y: y + 20,
-        width: 400,         // Resize to be smaller/fitter
-        height: 150         // Resize to be smaller/fitter
+      x: x + width - 420, // 400px width approx + 20px padding
+      y: y + 20,
+      width: 400,         // Resize to be smaller/fitter
+      height: 150         // Resize to be smaller/fitter
     });
 
     const send = () => {
-        toastShownAt = Date.now();
-        processingComplete = false;
-        toastWindow?.webContents.send('show-toast', message, options);
-        toastWindow?.showInactive();
+      toastShownAt = Date.now();
+      processingComplete = false;
+      toastWindow?.webContents.send('show-toast', message, options);
+      toastWindow?.showInactive();
     };
 
     if (toastWindow.webContents.isLoading()) {
-        toastWindow.webContents.once('did-finish-load', send);
+      toastWindow.webContents.once('did-finish-load', send);
     } else {
-        send();
+      send();
     }
   }
 };
