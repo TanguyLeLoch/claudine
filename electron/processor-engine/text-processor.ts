@@ -11,18 +11,31 @@ import { createSettingsWindow } from '../windows/settings-window';
 import { showToast } from '../windows/toast-window';
 import { logger } from '../utils/logger';
 
-export type TextOperation = 'fixTypos' | 'translateToEnglish' | 'translateToFrench';
+/**
+ * Operation is now a string key matching the shortcut's 'name' field in config
+ */
+export type TextOperation = string;
 
 /**
- * Process selected text with AI provider
- * @param operation The operation to perform
+ * Process selected text with AI provider using data-driven dispatch
+ * @param operationName The operation name (matches shortcut config 'name' field)
  */
-export const processText = async (operation: TextOperation): Promise<void> => {
+export const processText = async (operationName: string): Promise<void> => {
   try {
     // Check if API key is configured
     if (!configStore.hasApiKey()) {
       dialog.showErrorBox('API Key Missing', 'Please configure your API key in settings');
       createSettingsWindow();
+      return;
+    }
+
+    // Look up shortcut configuration
+    const shortcuts = configStore.getShortcuts();
+    const shortcut = shortcuts.find(s => s.name === operationName && s.inputType === 'text');
+
+    if (!shortcut) {
+      logger.error(`Unknown text operation: ${operationName}`);
+      showToast('Operation not found', { severity: 'error' });
       return;
     }
 
@@ -48,13 +61,8 @@ export const processText = async (operation: TextOperation): Promise<void> => {
       return;
     }
 
-    // Show toast notification
-    const operationMessages: Record<TextOperation, string> = {
-      fixTypos: 'Fixing typos and grammar...',
-      translateToEnglish: 'Translating to English...',
-      translateToFrench: 'Translating to French...',
-    };
-    showToast(operationMessages[operation], { type: 'loading' });
+    // Show toast notification using description from config
+    showToast(shortcut.description, { type: 'loading' });
 
     // Create AI provider
     const provider = AIProviderFactory.createProvider({
@@ -62,19 +70,8 @@ export const processText = async (operation: TextOperation): Promise<void> => {
       provider: configStore.getProvider(),
     });
 
-    // Process the text
-    let result: string;
-    switch (operation) {
-      case 'fixTypos':
-        result = await provider.fixTypos(selectedText);
-        break;
-      case 'translateToEnglish':
-        result = await provider.translateToEnglish(selectedText);
-        break;
-      case 'translateToFrench':
-        result = await provider.translateToFrench(selectedText);
-        break;
-    }
+    // Process the text using the prompt from config
+    const result = await provider.processText(shortcut.prompt, selectedText);
 
     logger.debug("AI Result: " + result);
 

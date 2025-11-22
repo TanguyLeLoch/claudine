@@ -1,35 +1,24 @@
 /**
- * AI Provider interface for text processing operations
+ * AI Provider interface for text and image processing operations
  * This abstraction allows switching between different AI providers (Gemini, GPT, etc.)
+ * Uses data-driven dispatch with prompts from configuration
  */
 export interface AIProvider {
   /**
-   * Fix typos and grammar in the provided text
-   * @param text The text to fix
-   * @returns The corrected text
+   * Process text using a dynamic AI prompt
+   * @param prompt The instruction prompt (loaded from config)
+   * @param text The user's selected text
+   * @returns The processed text
    */
-  fixTypos(text: string): Promise<string>;
+  processText(prompt: string, text: string): Promise<string>;
 
   /**
-   * Translate text to English
-   * @param text The text to translate
-   * @returns The translated text in English
+   * Process an image using a dynamic AI prompt
+   * @param prompt The instruction prompt (loaded from config)
+   * @param imageBuffer The raw image buffer (screenshot)
+   * @returns The extracted or processed text
    */
-  translateToEnglish(text: string): Promise<string>;
-
-  /**
-   * Translate text to French
-   * @param text The text to translate
-   * @returns The translated text in French
-   */
-  translateToFrench(text: string): Promise<string>;
-
-  /**
-   * Extract text from an image using OCR
-   * @param imageBuffer The image buffer to process
-   * @returns The extracted text
-   */
-  extractTextFromImage(imageBuffer: Buffer): Promise<string>;
+  processImage(prompt: string, imageBuffer: Buffer): Promise<string>;
 }
 
 /**
