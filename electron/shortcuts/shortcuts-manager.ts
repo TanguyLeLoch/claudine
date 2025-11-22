@@ -34,7 +34,12 @@ export const registerShortcuts = (): void => {
     logger.info('Shortcut triggered: Alt+Shift+F2 (Screenshot OCR)');
     captureAndExtractText();
   });
-  
+
+  globalShortcut.register('Alt+Shift+F3', () => {
+    logger.info('Shortcut triggered: Alt+Shift+F3 (Translate to Thai)');
+    processText('translateToThai');
+  });
+
   logger.info('Global shortcuts registered.');
 };
 

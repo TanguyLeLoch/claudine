@@ -51,7 +51,14 @@ const DEFAULT_SHORTCUTS: ShortcutConfig[] = [
     description: 'Screenshot OCR - Extract text from screen area',
     prompt: 'Extract all text from this image. Return ONLY the extracted text, maintaining the original layout and structure as much as possible.',
     inputType: 'image'
-  }
+  },
+  {
+    key: 'Alt+Shift+F3',
+    name: 'translateToThai',
+    description: 'Translate to Thai',
+    prompt: 'Translate the following text to Thai. I am a man. Return ONLY the translated text without any explanations or additional comments:',
+    inputType: 'text'
+  },
 ];
 
 const schema: Schema<ConfigSchema> = {
