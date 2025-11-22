@@ -9,7 +9,9 @@
       "WebFetch(domain:www.npmjs.com)",
       "Bash(find:*)",
       "WebSearch",
-      "WebFetch(domain:stackoverflow.com)"
+      "WebFetch(domain:stackoverflow.com)",
+      "WebFetch(domain:primeng.org)",
+      "WebFetch(domain:angular.dev)"
     ],
     "deny": [],
     "ask": []

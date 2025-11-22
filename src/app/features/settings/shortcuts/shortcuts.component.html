@@ -1,28 +1,72 @@
-<div class="p-4">
+<div class="p-4 max-w-5xl mx-auto">
+  <p-toast position="bottom-right"></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-800 m-0">Shortcuts</h2>
+      <p class="text-gray-500 text-sm m-0">Drag items to reorder priority • Changes save automatically</p>
+    </div>
+
+    <p-button
+      label="Add Shortcut"
+      icon="pi pi-plus"
+      (onClick)="openAddDialog()">
+    </p-button>
+  </div>
+
   <p-card header="Keyboard Shortcuts" subheader="View your current AI utility bindings">
-    <div class="space-y-4">
+    <div cdkDropList (cdkDropListDropped)="drop($event)" class="space-y-4">
 
       @for (shortcut of shortcuts; track shortcut.key) {
-        <div class="flex flex-col gap-2 py-4 border-b border-gray-200 last:border-b-0">
+        <div cdkDrag class="flex items-start gap-3 py-4 border-b border-gray-200 last:border-b-0">
 
-          <div class="flex items-start justify-between">
-            <div class="flex items-center gap-2">
-              @if (shortcut.inputType === 'image') {
-                <p-tag icon="pi pi-camera" severity="warn" value="Image" pTooltip="Uses Screenshot"></p-tag>
-              } @else {
-                <p-tag icon="pi pi-file-edit" severity="info" value="Text" pTooltip="Uses Clipboard Text"></p-tag>
-              }
-              <span class="text-lg font-medium text-gray-800">{{ shortcut.description }}</span>
-            </div>
-
-            <kbd class="px-3 py-1.5 text-sm font-bold text-gray-800 bg-gray-100 border border-gray-300 rounded-lg shadow-sm whitespace-nowrap">
-              {{ shortcut.key }}
-            </kbd>
+          <!-- Drag Handle -->
+          <div cdkDragHandle class="flex-shrink-0 cursor-move text-gray-400 hover:text-gray-600 mt-1">
+            <i class="pi pi-bars text-lg"></i>
           </div>
 
-          <div class="pl-1 text-sm text-gray-500 bg-gray-50 p-2 rounded border border-gray-100 mt-1">
-            <span class="font-semibold text-xs uppercase tracking-wide text-gray-400">AI Prompt:</span>
-            <span class="italic ml-2">"{{ shortcut.prompt }}"</span>
+          <!-- Content Section -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between">
+              <div class="flex items-center gap-2">
+                @if (shortcut.inputType === 'image') {
+                  <p-tag icon="pi pi-camera" severity="warn" value="Image" pTooltip="Uses Screenshot"></p-tag>
+                } @else {
+                  <p-tag icon="pi pi-file-edit" severity="info" value="Text" pTooltip="Uses Clipboard Text"></p-tag>
+                }
+                <span class="text-lg font-medium text-gray-800">{{ shortcut.description }}</span>
+              </div>
+
+              <kbd class="px-3 py-1.5 text-sm font-bold text-gray-800 bg-gray-100 border border-gray-300 rounded-lg shadow-sm whitespace-nowrap">
+                {{ shortcut.key }}
+              </kbd>
+            </div>
+
+            <div class="pl-1 text-sm text-gray-500 bg-gray-50 p-2 rounded border border-gray-100 mt-2">
+              <span class="font-semibold text-xs uppercase tracking-wide text-gray-400">AI Prompt:</span>
+              <span class="italic ml-2">"{{ shortcut.prompt }}"</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex gap-1 flex-shrink-0 ml-2">
+            <p-button
+              icon="pi pi-pencil"
+              severity="secondary"
+              [text]="true"
+              [rounded]="true"
+              pTooltip="Edit shortcut"
+              (onClick)="openEditDialog(shortcut, shortcuts.indexOf(shortcut))">
+            </p-button>
+            <p-button
+              icon="pi pi-trash"
+              severity="danger"
+              [text]="true"
+              [rounded]="true"
+              pTooltip="Delete shortcut"
+              (onClick)="confirmDelete(shortcut, shortcuts.indexOf(shortcut))">
+            </p-button>
           </div>
 
         </div>
@@ -30,10 +74,19 @@
 
       @if (shortcuts.length === 0) {
         <div class="text-center py-8 text-gray-500">
-          Loading shortcuts...
+          <p class="text-xl mb-2">No shortcuts configured</p>
+          <p class="text-sm">Click "Add Shortcut" to create your first one</p>
         </div>
       }
 
     </div>
   </p-card>
+
+  <app-shortcut-editor
+    [visible]="isEditorVisible"
+    [shortcutData]="selectedShortcutForEdit"
+    [existingNames]="[]"
+    (save)="handleSave($event)"
+    (cancel)="isEditorVisible = false">
+  </app-shortcut-editor>
 </div>

@@ -1,0 +1,84 @@
+<p-dialog
+  [header]="isNew ? 'Add New Shortcut' : 'Edit Shortcut'"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [closable]="false">
+
+  <form [formGroup]="form" class="flex flex-col gap-4 pt-2">
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col gap-2">
+        <label for="key" class="font-semibold text-sm">Keyboard Shortcut</label>
+        <input pInputText id="key" formControlName="key" placeholder="e.g. Alt+F1"/>
+        @if (isFieldInvalid('key')) {
+          <small class="text-red-600">Required (e.g. Alt+F1)</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="name" class="font-semibold text-sm">Internal Name</label>
+        <input pInputText id="name" formControlName="name" placeholder="noSpaces"/>
+        @if (hasError('name', 'pattern')) {
+          <small class="text-red-600">No spaces allowed</small>
+        }
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col gap-2">
+        <label for="description" class="font-semibold text-sm">Description</label>
+        <input pInputText id="description" formControlName="description"/>
+        @if (isFieldInvalid('description')) {
+          <small class="text-red-600">Required</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="inputType" class="font-semibold text-sm">Input Type</label>
+        <p-select
+          inputId="inputType"
+          [options]="inputTypeOptions"
+          formControlName="inputType"
+          optionLabel="label"
+          optionValue="value"
+          styleClass="w-full">
+        </p-select>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="prompt" class="font-semibold text-sm">AI Prompt</label>
+      <textarea
+        pInputTextarea
+        id="prompt"
+        formControlName="prompt"
+        rows="5"
+        placeholder="Enter the AI instruction prompt..."
+        class="w-full">
+      </textarea>
+      @if (isFieldInvalid('prompt')) {
+        <small class="text-red-600">Required</small>
+      }
+      <small class="text-gray-500">The instruction sent to the AI model</small>
+    </div>
+
+  </form>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      class="pt-2"
+      label="Cancel"
+      icon="pi pi-times"
+      severity="secondary"
+      (onClick)="onCancel()">
+    </p-button>
+    <p-button
+      class="pt-2"
+      label="Save"
+      icon="pi pi-check"
+      [disabled]="form.invalid"
+      (onClick)="onSubmit()">
+    </p-button>
+  </ng-template>
+</p-dialog>
