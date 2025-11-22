@@ -8,7 +8,7 @@ import started from 'electron-squirrel-startup';
 import { configStore } from './services/config-store';
 import { createSettingsWindow } from './windows/settings-window';
 import { createTray } from './tray/tray-manager';
-import { registerShortcuts, unregisterShortcuts } from './shortcuts/shortcuts-manager';
+import { registerShortcuts, unregisterShortcuts, setupShortcutsReloading } from './shortcuts/shortcuts-manager';
 import { setupIpcHandlers } from './ipc/handlers';
 import { destroyToastWindow } from './windows/toast-window';
 import { logger } from './utils/logger';
@@ -29,6 +29,7 @@ app.whenReady().then(() => {
   logger.info('App is ready. Initializing components...');
   createTray();
   registerShortcuts();
+  setupShortcutsReloading(); // Enable live reload for shortcuts
   setupIpcHandlers();
   // Toast window now created lazily on first showToast() call
   app.setLoginItemSettings({

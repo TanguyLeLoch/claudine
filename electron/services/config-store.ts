@@ -88,9 +88,11 @@ const schema: Schema<ConfigSchema> = {
 
 /**
  * Configuration store for persisting app settings
+ * Uses Observer Pattern (callback-based) for live reload functionality
  */
 export class ConfigStore {
   private store: any; // Using any to bypass type issues with electron-store
+  private shortcutsChangeListeners: Array<(shortcuts: ShortcutConfig[]) => void> = [];
 
   constructor() {
     this.store = new Store<ConfigSchema>({
@@ -145,9 +147,33 @@ export class ConfigStore {
 
   /**
    * Set shortcuts configuration
+   * Notifies all listeners when shortcuts change
    */
   setShortcuts(shortcuts: ShortcutConfig[]): void {
     this.store.set('shortcuts', shortcuts);
+    this.notifyShortcutsListeners(shortcuts);
+  }
+
+  /**
+   * Subscribe to shortcuts configuration changes
+   * @param listener Callback function invoked when shortcuts change
+   */
+  onShortcutsChange(listener: (shortcuts: ShortcutConfig[]) => void): void {
+    this.shortcutsChangeListeners.push(listener);
+  }
+
+  /**
+   * Notify all listeners about shortcuts changes
+   * @private
+   */
+  private notifyShortcutsListeners(shortcuts: ShortcutConfig[]): void {
+    this.shortcutsChangeListeners.forEach(listener => {
+      try {
+        listener(shortcuts);
+      } catch (error) {
+        console.error('Error in shortcuts change listener:', error);
+      }
+    });
   }
 }
 
