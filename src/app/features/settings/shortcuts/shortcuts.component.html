@@ -24,61 +24,65 @@
     <div cdkDropList (cdkDropListDropped)="drop($event)" class="space-y-4">
 
       @for (shortcut of shortcuts; track shortcut.name) {
-        <div cdkDrag class="flex flex-col py-4 border-b border-gray-200 last:border-b-0">
+        <div cdkDrag class="flex flex-row items-center py-4 border-b border-gray-200 last:border-b-0">
+          <!-- Drag Handle -->
+          <div cdkDragHandle class="flex-shrink-0 cursor-move text-gray-400 hover:text-gray-600 mt-1">
+            <i class="pi pi-bars text-lg"></i>
+          </div>
+          <div class="flex flex-col pl-6">
+            <!--  first line-->
+            <div class="flex justify-between">
 
-          <div class="flex items-start gap-3 w-full">
-            <!-- Drag Handle -->
-            <div cdkDragHandle class="flex-shrink-0 cursor-move text-gray-400 hover:text-gray-600 mt-1">
-              <i class="pi pi-bars text-lg"></i>
+              <span class=" text-lg font-medium text-gray-800">{{ shortcut.name }}</span>
+              <div class="flex gap-1 flex-shrink-0 ml-2">
+                <p-button
+                  icon="pi pi-pencil"
+                  severity="primary"
+                  [text]="true"
+                  [rounded]="true"
+                  pTooltip="Edit shortcut"
+                  [tooltipOptions]="tooltipOption"
+                  (onClick)="openEditDialog(shortcut, shortcuts.indexOf(shortcut))">
+                </p-button>
+                <p-button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  [text]="true"
+                  [rounded]="true"
+                  pTooltip="Delete shortcut"
+                  [tooltipOptions]="tooltipOption"
+                  (onClick)="confirmDelete($event, shortcut, shortcuts.indexOf(shortcut))">
+                </p-button>
+              </div>
             </div>
 
-            <!-- Content Section -->
-            <div class="flex-1 min-w-0 flex items-start justify-between">
-              <div class="flex items-center gap-2">
+            <div class="flex items-center justify-between gap-3 w-full">
+
+
+              <div class="flex justify-between w-full">
                 @if (shortcut.inputType === 'image') {
                   <p-tag icon="pi pi-camera" severity="warn" value="Image" pTooltip="Uses Screenshot"></p-tag>
                 } @else {
                   <p-tag icon="pi pi-file-edit" severity="info" value="Text" pTooltip="Uses Clipboard Text"></p-tag>
                 }
-                <span class="text-lg font-medium text-gray-800">{{ shortcut.name }}</span>
+
+                <kbd
+                  class="px-3 py-1.5 text-sm font-bold text-gray-800 bg-gray-100 border border-gray-300 rounded-lg shadow-sm whitespace-nowrap">
+                  {{ shortcut.key }}
+                </kbd>
               </div>
 
-              <kbd
-                class="px-3 py-1.5 text-sm font-bold text-gray-800 bg-gray-100 border border-gray-300 rounded-lg shadow-sm whitespace-nowrap">
-                {{ shortcut.key }}
-              </kbd>
+              <!-- Action Buttons -->
+
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex gap-1 flex-shrink-0 ml-2">
-              <p-button
-                icon="pi pi-pencil"
-                severity="primary"
-                [text]="true"
-                [rounded]="true"
-                pTooltip="Edit shortcut"
-                [tooltipOptions]="tooltipOption"
-                (onClick)="openEditDialog(shortcut, shortcuts.indexOf(shortcut))">
-              </p-button>
-              <p-button
-                icon="pi pi-trash"
-                severity="danger"
-                [text]="true"
-                [rounded]="true"
-                pTooltip="Delete shortcut"
-                [tooltipOptions]="tooltipOption"
-                (onClick)="confirmDelete($event, shortcut, shortcuts.indexOf(shortcut))">
-              </p-button>
+            <div class=" text-sm text-gray-500 mt-2">
+              <div class="bg-gray-50 p-2 rounded border border-gray-100">
+                <span class="font-semibold text-xs uppercase tracking-wide text-gray-400">AI Prompt:</span>
+                <span class="italic ml-2">"{{ shortcut.prompt }}"</span>
+              </div>
             </div>
           </div>
-
-          <div class="pl-8 text-sm text-gray-500 mt-2">
-            <div class="bg-gray-50 p-2 rounded border border-gray-100">
-              <span class="font-semibold text-xs uppercase tracking-wide text-gray-400">AI Prompt:</span>
-              <span class="italic ml-2">"{{ shortcut.prompt }}"</span>
-            </div>
-          </div>
-
         </div>
       }
 
