@@ -1,52 +1,27 @@
-
-
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { InputText } from 'primeng/inputtext';
-import { Select } from 'primeng/select';
-import { Button } from 'primeng/button';
-import { Message } from 'primeng/message';
-import { Card } from 'primeng/card';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-interface Provider {
-  label: string;
-  value: 'gemini' | 'gpt';
-  disabled?: boolean;
-}
+import { RouterModule } from '@angular/router';
+import { Menu } from 'primeng/menu';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, Button, Select, Card, Message, FormsModule, InputText],
+  imports: [CommonModule, RouterModule, Menu],
   templateUrl: './settings.component.html',
-  styleUrl: './settings.component.scss' // Use styleUrl instead of styleUrls for a single file
+  styleUrl: './settings.component.scss'
 })
-export class SettingsComponent implements OnInit {
-  apiKey: string = '';
-  selectedProvider: Provider | undefined;
-
-  providers: Provider[] = [
-    { label: 'Google Gemini', value: 'gemini' },
-    { label: 'OpenAI GPT (Coming soon)', value: 'gpt', disabled: true }
+export class SettingsComponent {
+  menuItems: MenuItem[] = [
+    {
+      label: 'Shortcuts',
+      icon: 'pi pi-bolt',
+      routerLink: ['/settings', 'shortcuts']
+    },
+    {
+      label: 'API Configuration',
+      icon: 'pi pi-key',
+      routerLink: ['/settings', 'api']
+    },
   ];
-
-  async ngOnInit() {
-    if (window.electronAPI) {
-      const apiKey = await window.electronAPI.getApiKey();
-      const provider = await window.electronAPI.getProvider();
-
-      this.apiKey = apiKey || '';
-      this.selectedProvider = this.providers.find(p => p.value === provider);
-    }
-  }
-
-  async onSave() {
-    if (window.electronAPI) {
-      await window.electronAPI.setApiKey(this.apiKey);
-      if (this.selectedProvider) {
-        await window.electronAPI.setProvider(this.selectedProvider.value);
-      }
-    }
-  }
 }

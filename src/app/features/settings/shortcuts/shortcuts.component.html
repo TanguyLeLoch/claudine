@@ -1,0 +1,14 @@
+<div class="p-4">
+  <p-card header="Keyboard Shortcuts">
+    <div class="space-y-4">
+      @for (shortcut of shortcuts; track shortcut.key) {
+        <div class="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0">
+          <span class="text-gray-700">{{ shortcut.description }}</span>
+          <kbd class="px-3 py-1.5 text-sm font-semibold text-gray-800 bg-gray-100 border border-gray-300 rounded-lg shadow-sm">
+            {{ shortcut.key }}
+          </kbd>
+        </div>
+      }
+    </div>
+  </p-card>
+</div>

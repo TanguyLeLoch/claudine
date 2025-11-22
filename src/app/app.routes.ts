@@ -3,7 +3,22 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: 'settings',
-    loadComponent: () => import('./features/settings/settings.component').then(m => m.SettingsComponent)
+    loadComponent: () => import('./features/settings/settings.component').then(m => m.SettingsComponent),
+    children: [
+      {
+        path: '',
+        redirectTo: 'shortcuts',
+        pathMatch: 'full'
+      },
+      {
+        path: 'shortcuts',
+        loadComponent: () => import('./features/settings/shortcuts/shortcuts.component').then(m => m.ShortcutsComponent)
+      },
+      {
+        path: 'api',
+        loadComponent: () => import('./features/settings/settings-api/settings-api.component').then(m => m.SettingsApiComponent)
+      },
+    ]
   },
   {
     path: 'overlay',
