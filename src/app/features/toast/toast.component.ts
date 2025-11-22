@@ -45,6 +45,7 @@ export class ToastComponent implements OnInit {
               severity: 'info',
               summary: 'Processing',
               detail: message,
+              closable: false,
               sticky: true // Toast stays until we clear it
             });
 
@@ -63,6 +64,7 @@ export class ToastComponent implements OnInit {
               severity: options.severity || 'info',
               summary: options.severity === 'error' ? 'Error' : (options.severity === 'success' ? 'Success' : 'Info'),
               detail: message,
+              closable: false,
               life: options.sticky ? undefined : 3000
             });
           }

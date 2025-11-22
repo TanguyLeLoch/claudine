@@ -44,6 +44,9 @@ export const createToastWindow = (): void => {
     }
   });
 
+  // Make window click-through so it doesn't block clicks on the top-right area
+  toastWindow.setIgnoreMouseEvents(true);
+
   // Load the toast overlay app
   const isDev = !app.isPackaged || process.argv.includes('--dev');
 

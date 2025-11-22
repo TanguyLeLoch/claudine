@@ -1,2 +1,7 @@
 /* No custom styles needed, Tailwind will handle it */
 /* :host styles moved to template and global styles */
+
+/* Make toasts semi-transparent (50% opacity) */
+::ng-deep .p-toast {
+  opacity: 0.7;
+}
