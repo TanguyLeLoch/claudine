@@ -3,12 +3,12 @@
  */
 
 import { clipboard, dialog } from 'electron';
-import { keyboard, Key } from '@nut-tree-fork/nut-js';
+import { Key, keyboard } from '@nut-tree-fork/nut-js';
 import { configStore } from '../services/config-store';
 import { AIProviderFactory } from '../services/ai-provider';
 import { sleep } from '../utils/helpers';
 import { createSettingsWindow } from '../windows/settings-window';
-import { showToast, hideToast } from '../windows/toast-window';
+import { showToast } from '../windows/toast-window';
 import { logger } from '../utils/logger';
 
 export type TextOperation = 'fixTypos' | 'translateToEnglish' | 'translateToFrench';
@@ -90,14 +90,13 @@ export const processText = async (operation: TextOperation): Promise<void> => {
     await sleep(500);
     clipboard.writeText(originalClipboard);
 
-    // Show success and then hide
+    // Show success (PrimeNG auto-dismisses after 3 seconds via life: 3000)
     showToast('Done!', { severity: 'success' });
-    setTimeout(() => hideToast(), 3000);
 
   } catch (error) {
+    // Show error (PrimeNG auto-dismisses after 3 seconds via life: 3000)
     showToast('Error processing text', { severity: 'error' });
-    setTimeout(() => hideToast(), 4000);
-    
+
     logger.error('Processing Error', error);
     // dialog.showErrorBox('Processing Error', error instanceof Error ? error.message : 'Unknown error');
   }

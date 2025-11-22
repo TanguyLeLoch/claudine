@@ -10,7 +10,7 @@ import { createSettingsWindow } from './windows/settings-window';
 import { createTray } from './tray/tray-manager';
 import { registerShortcuts, unregisterShortcuts } from './shortcuts/shortcuts-manager';
 import { setupIpcHandlers } from './ipc/handlers';
-import { createToastWindow, destroyToastWindow } from './windows/toast-window';
+import { destroyToastWindow } from './windows/toast-window';
 import { logger } from './utils/logger';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling
@@ -30,7 +30,7 @@ app.whenReady().then(() => {
   createTray();
   registerShortcuts();
   setupIpcHandlers();
-  createToastWindow(); // Initialize toast notification window
+  // Toast window now created lazily on first showToast() call
   app.setLoginItemSettings({
     openAtLogin: true,
     openAsHidden: true,

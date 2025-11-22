@@ -6,7 +6,7 @@ import { screen, clipboard, dialog, desktopCapturer } from 'electron';
 import { configStore } from '../services/config-store';
 import { AIProviderFactory } from '../services/ai-provider';
 import { createSettingsWindow } from '../windows/settings-window';
-import { showToast, hideToast } from '../windows/toast-window';
+import { showToast } from '../windows/toast-window';
 import { logger } from '../utils/logger';
 import { selectScreenArea, SelectionArea } from '../windows/overlay-window';
 import Rectangle = Electron.Rectangle;
@@ -93,9 +93,8 @@ export const captureAndExtractText = async (): Promise<void> => {
     // Copy to clipboard
     clipboard.writeText(extractedText);
 
-    // Show success notification
+    // Show success (PrimeNG auto-dismisses after 3 seconds via life: 3000)
     showToast('Text extracted and copied!', { severity: 'success' });
-    setTimeout(() => hideToast(), 3000);
 
     /* 
     dialog.showMessageBox({
@@ -107,9 +106,9 @@ export const captureAndExtractText = async (): Promise<void> => {
     */
 
   } catch (error) {
+    // Show error (PrimeNG auto-dismisses after 3 seconds via life: 3000)
     showToast('OCR Failed', { severity: 'error' });
-    setTimeout(() => hideToast(), 4000);
-    
+
     logger.error('Error in captureAndExtractText:', error);
     if (error instanceof Error) {
          logger.error(error.stack);
