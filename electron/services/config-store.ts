@@ -135,7 +135,12 @@ export class ConfigStore {
    * Get shortcuts configuration
    */
   getShortcuts(): ShortcutConfig[] {
-    return this.store.get('shortcuts') as ShortcutConfig[];
+    let shortcuts = this.store.get('shortcuts') as ShortcutConfig[];
+
+    if (!shortcuts || shortcuts.length === 0) {
+      return DEFAULT_SHORTCUTS;
+    }
+    return shortcuts;
   }
 
   /**

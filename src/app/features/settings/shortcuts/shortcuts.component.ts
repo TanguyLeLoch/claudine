@@ -11,7 +11,7 @@ import { Tag } from 'primeng/tag';
 import { Toast } from 'primeng/toast';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
-import { ConfirmationService, MessageService, TooltipOptions } from 'primeng/api';
+import { ConfirmationService, MessageService, PrimeTemplate, TooltipOptions } from 'primeng/api';
 
 // Components & Types
 import { ShortcutEditorComponent } from './shortcut-editor/shortcut-editor.component';
@@ -31,7 +31,8 @@ import { type ShortcutConfig } from '../../../../types';
     Toast,
     ConfirmDialog,
     TooltipModule,
-    ShortcutEditorComponent
+    ShortcutEditorComponent,
+    PrimeTemplate
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './shortcuts.component.html',
@@ -172,6 +173,38 @@ export class ShortcutsComponent implements OnInit {
 
       // Auto-save after reorder
       await this.saveToElectron();
+    }
+  }
+
+  confirmResetToDefault() {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to reset all shortcuts to their default values? This action cannot be undone.',
+      header: 'Confirm Reset',
+      icon: 'pi pi-exclamation-triangle',
+      accept: async () => {
+        await this.resetToDefault();
+      }
+    });
+  }
+
+  async resetToDefault() {
+    if (!window.electronAPI) return;
+
+    try {
+      await window.electronAPI.setShortcuts([]); // Send an empty array to clear shortcuts
+      await this.loadShortcuts(); // Reload from store to reflect the cleared state
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Cleared',
+        detail: 'All shortcuts have been cleared.'
+      });
+    } catch (error) {
+      console.error('Failed to clear shortcuts:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to clear shortcuts.'
+      });
     }
   }
 }
