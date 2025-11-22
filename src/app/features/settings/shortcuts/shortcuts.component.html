@@ -18,7 +18,7 @@
   <p-card header="Keyboard Shortcuts" subheader="View your current AI utility bindings">
     <div cdkDropList (cdkDropListDropped)="drop($event)" class="space-y-4">
 
-      @for (shortcut of shortcuts; track shortcut.key) {
+      @for (shortcut of shortcuts; track shortcut.name) {
         <div cdkDrag class="flex flex-col py-4 border-b border-gray-200 last:border-b-0">
 
           <div class="flex items-start gap-3 w-full">
@@ -35,7 +35,7 @@
                 } @else {
                   <p-tag icon="pi pi-file-edit" severity="info" value="Text" pTooltip="Uses Clipboard Text"></p-tag>
                 }
-                <span class="text-lg font-medium text-gray-800">{{ shortcut.description }}</span>
+                <span class="text-lg font-medium text-gray-800">{{ shortcut.name }}</span>
               </div>
 
               <kbd
@@ -90,7 +90,7 @@
   <app-shortcut-editor
     [visible]="isEditorVisible"
     [shortcutData]="selectedShortcutForEdit"
-    [existingNames]="[]"
+    [existingNames]="getExistingNames()"
     (save)="handleSave($event)"
     (cancel)="isEditorVisible = false">
   </app-shortcut-editor>

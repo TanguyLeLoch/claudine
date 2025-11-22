@@ -18,7 +18,7 @@ export type TextOperation = string;
 
 /**
  * Process selected text with AI provider using data-driven dispatch
- * @param operationName The operation name (matches shortcut config 'name' field)
+ * @param operationName The operation Name (matches shortcut config 'name' field)
  */
 export const processText = async (operationName: string): Promise<void> => {
   try {
@@ -61,8 +61,8 @@ export const processText = async (operationName: string): Promise<void> => {
       return;
     }
 
-    // Show toast notification using description from config
-    showToast(shortcut.description, { type: 'loading' });
+    // Show toast notification using name from config
+    showToast(shortcut.name, { type: 'loading' });
 
     // Create AI provider
     const provider = AIProviderFactory.createProvider({

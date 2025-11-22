@@ -47,8 +47,7 @@ export class ShortcutEditorComponent implements OnChanges {
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       key: ['', Validators.required],
-      name: ['', [Validators.required, Validators.pattern(/^\S+$/)]],
-      description: ['', Validators.required],
+      name: ['', [Validators.required, this.uniqueNameValidator.bind(this)]],
       prompt: ['', Validators.required],
       inputType: ['text', Validators.required]
     });
@@ -66,8 +65,25 @@ export class ShortcutEditorComponent implements OnChanges {
       this.form.patchValue(this.shortcutData);
     } else {
       this.isNew = true;
-      this.form.reset({ inputType: 'text' });
+      this.form.reset({
+        inputType: 'text'
+      });
     }
+  }
+
+  uniqueNameValidator(control: any) {
+    const name = control.value;
+    if (!name) return null;
+
+    // If editing, allow the current name
+    if (!this.isNew && this.shortcutData && name === this.shortcutData.name) {
+      return null;
+    }
+
+    if (this.existingNames.includes(name)) {
+      return { unique: true };
+    }
+    return null;
   }
 
   onSubmit() {

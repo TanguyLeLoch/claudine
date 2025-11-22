@@ -13,9 +13,9 @@ import Rectangle = Electron.Rectangle;
 
 /**
  * Capture a screenshot area and process it with AI using data-driven dispatch
- * @param operationName The operation name (matches shortcut config 'name' field), defaults to 'screenshotOCR'
+ * @param operationName The operation name (matches shortcut config 'name' field), defaults to 'Extract text from screenshot'
  */
-export const captureAndExtractText = async (operationName: string = 'screenshotOCR'): Promise<void> => {
+export const captureAndExtractText = async (operationName: string = 'Extract text from screenshot'): Promise<void> => {
   logger.info(`Starting captureAndExtractText with operation: ${operationName}`);
   try {
     // Check if API key is configured
@@ -86,8 +86,8 @@ export const captureAndExtractText = async (operationName: string = 'screenshotO
 
     logger.info('Image cropped. Sending to AI...');
 
-    // Show toast notification using description from config
-    showToast(shortcut.description, { type: 'loading' });
+    // Show toast notification using name from config
+    showToast(shortcut.name, { type: 'loading' });
 
     // Create AI provider
     const provider = AIProviderFactory.createProvider({

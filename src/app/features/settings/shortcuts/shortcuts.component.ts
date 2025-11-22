@@ -115,7 +115,7 @@ export class ShortcutsComponent implements OnInit {
       this.messageService.add({
         severity: 'success',
         summary: 'Added',
-        detail: `Shortcut "${formValue.description}" added`
+        detail: `Shortcut "${formValue.name}" added`
       });
     } else {
       // Update existing shortcut
@@ -125,7 +125,7 @@ export class ShortcutsComponent implements OnInit {
       this.messageService.add({
         severity: 'success',
         summary: 'Updated',
-        detail: `Shortcut "${formValue.description}" updated`
+        detail: `Shortcut "${formValue.name}" updated`
       });
     }
 
@@ -137,7 +137,7 @@ export class ShortcutsComponent implements OnInit {
 
   confirmDelete(shortcut: ShortcutConfig, index: number) {
     this.confirmationService.confirm({
-      message: `Delete "${shortcut.description}"?`,
+      message: `Delete "${shortcut.name}"?`,
       header: 'Confirm Deletion',
       icon: 'pi pi-exclamation-triangle',
       accept: async () => {
@@ -152,6 +152,10 @@ export class ShortcutsComponent implements OnInit {
         await this.saveToElectron();
       }
     });
+  }
+
+  getExistingNames(): string[] {
+    return this.shortcuts.map(s => s.name);
   }
 
   // --- Reordering Logic ---

@@ -6,7 +6,6 @@ import Store, { type Schema } from 'electron-store';
 export interface ShortcutConfig {
   key: string;
   name: string;
-  description: string;
   prompt: string;
   inputType: 'text' | 'image';
 }
@@ -26,36 +25,31 @@ type ConfigSchema = {
 const DEFAULT_SHORTCUTS: ShortcutConfig[] = [
   {
     key: 'Alt+F1',
-    name: 'fixTypos',
-    description: 'Fix typos and grammar',
+    name: 'Fix typos and grammar',
     prompt: 'Fix any typos and grammar mistakes in the following text. Return ONLY the corrected text without any explanations or additional comments:',
     inputType: 'text'
   },
   {
     key: 'Alt+F2',
-    name: 'translateToEnglish',
-    description: 'Translate to English',
+    name: 'Translate to English',
     prompt: 'Translate the following text to ENGLISH. Return ONLY the translated text without any explanations or additional comments:',
     inputType: 'text'
   },
   {
     key: 'Alt+F3',
-    name: 'translateToFrench',
-    description: 'Translate to French',
+    name: 'Translate to French',
     prompt: 'Translate the following text to FRENCH. Return ONLY the translated text without any explanations or additional comments:',
     inputType: 'text'
   },
   {
     key: 'Alt+Shift+F2',
-    name: 'screenshotOCR',
-    description: 'Screenshot OCR - Extract text from screen area',
+    name: 'Extract text from screenshot',
     prompt: 'Extract all text from this image. Return ONLY the extracted text, maintaining the original layout and structure as much as possible.',
     inputType: 'image'
   },
   {
     key: 'Alt+Shift+F3',
-    name: 'translateToThai',
-    description: 'Translate to Thai',
+    name: 'Translate to Thai',
     prompt: 'Translate the following text to Thai. I am a man. Return ONLY the translated text without any explanations or additional comments:',
     inputType: 'text'
   },
@@ -78,7 +72,6 @@ const schema: Schema<ConfigSchema> = {
       properties: {
         key: { type: 'string' },
         name: { type: 'string' },
-        description: { type: 'string' },
         prompt: { type: 'string' },
         inputType: { type: 'string', enum: ['text', 'image'] }
       }

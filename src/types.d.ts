@@ -1,7 +1,6 @@
 export interface ShortcutConfig {
   key: string;
   name: string;
-  description: string;
   prompt: string;
   inputType: 'text' | 'image';
 }
