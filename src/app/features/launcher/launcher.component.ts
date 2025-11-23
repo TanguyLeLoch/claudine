@@ -44,7 +44,7 @@ export class LauncherComponent implements OnInit {
     // Close launcher on Escape
     if (event.key === 'Escape') {
       if (window.electronAPI) {
-        window.electronAPI.closeLauncher();
+        window.electronAPI.submitLauncherAction();
       }
       return;
     }
@@ -72,8 +72,9 @@ export class LauncherComponent implements OnInit {
   }
 
   triggerShortcut(shortcut: ShortcutConfig) {
-    console.log('Triggered shortcut:', shortcut.name, shortcut.key);
-    // Future: window.electronAPI.executeShortcut(shortcut.name);
+    if (window.electronAPI) {
+      window.electronAPI.submitLauncherAction(shortcut.name);
+    }
   }
 
   onShortcutClick(shortcut: ShortcutConfig, index: number) {

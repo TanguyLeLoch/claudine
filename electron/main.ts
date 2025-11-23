@@ -8,7 +8,7 @@ import started from 'electron-squirrel-startup';
 import { configStore } from './services/config-store';
 import { createSettingsWindow } from './windows/settings-window';
 import { createTray } from './tray/tray-manager';
-import { registerShortcuts, unregisterShortcuts, setupShortcutsReloading } from './shortcuts/shortcuts-manager';
+import { registerShortcuts, setupShortcutsReloading, unregisterShortcuts } from './shortcuts/shortcuts-manager';
 import { setupIpcHandlers } from './ipc/handlers';
 import { destroyToastWindow } from './windows/toast-window';
 import { logger } from './utils/logger';
@@ -27,6 +27,12 @@ process.on('uncaughtException', (error) => {
 // App initialization when Electron is ready
 app.whenReady().then(() => {
   logger.info('App is ready. Initializing components...');
+
+  // Hide dock icon on macOS for launcher behavior
+  if (process.platform === 'darwin') {
+    app?.dock?.hide();
+  }
+
   createTray();
   registerShortcuts();
   setupShortcutsReloading(); // Enable live reload for shortcuts

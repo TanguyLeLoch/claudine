@@ -5,12 +5,32 @@
 import { globalShortcut } from 'electron';
 import { processText } from '../processor-engine/text-processor';
 import { captureAndExtractText } from '../processor-engine/screenshot-processor';
-import { configStore } from '../services/config-store';
+import { configStore, type ShortcutConfig } from '../services/config-store';
 import { logger } from '../utils/logger';
 import { showLauncherWindow } from '../windows/launcher-window';
 
 // Flag to prevent race conditions during reload
 let isReloading = false;
+
+/**
+ * Execute the action associated with a shortcut
+ */
+export const triggerShortcutAction = (shortcut: ShortcutConfig): void => {
+  // Dispatch based on input type
+  if (shortcut.inputType === 'text') {
+    processText(shortcut.name).catch(err =>
+      logger.error('Text processing error:', err)
+    );
+  } else if (shortcut.inputType === 'image') {
+    captureAndExtractText(shortcut.name).catch(err =>
+      logger.error('Image processing error:', err)
+    );
+  } else if (shortcut.inputType === 'launcher') {
+    showLauncherWindow();
+  } else {
+    logger.warn(`Unknown input type for shortcut ${shortcut.name}: ${shortcut.inputType}`);
+  }
+};
 
 /**
  * Unregister all global shortcuts
@@ -46,21 +66,7 @@ export const registerShortcuts = (): void => {
         // Attempt to register the shortcut
         const isRegistered = globalShortcut.register(shortcut.key, () => {
           logger.info(`Shortcut triggered: ${shortcut.key} (${shortcut.name})`);
-
-          // Dispatch based on input type
-          if (shortcut.inputType === 'text') {
-            processText(shortcut.name).catch(err =>
-              logger.error('Text processing error:', err)
-            );
-          } else if (shortcut.inputType === 'image') {
-            captureAndExtractText(shortcut.name).catch(err =>
-              logger.error('Image processing error:', err)
-            );
-          } else if (shortcut.inputType === 'launcher') {
-            showLauncherWindow();
-          } else {
-            logger.warn(`Unknown input type for shortcut ${shortcut.name}: ${shortcut.inputType}`);
-          }
+          triggerShortcutAction(shortcut);
         });
 
         if (isRegistered) {

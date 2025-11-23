@@ -8,7 +8,8 @@ import { getSettingsWindow } from '../windows/settings-window';
 import { hideLauncherWindow } from '../windows/launcher-window';
 import { IPC_CHANNELS } from './ipc-types';
 import { logger } from '../utils/logger';
-import { resumeGlobalShortcuts, suspendGlobalShortcuts } from '../shortcuts/shortcuts-manager';
+import { resumeGlobalShortcuts, suspendGlobalShortcuts, triggerShortcutAction } from '../shortcuts/shortcuts-manager';
+import { sleep } from '../utils/helpers';
 
 /**
  * Set up IPC handlers for communication with renderer processes
@@ -53,8 +54,23 @@ export const setupIpcHandlers = (): void => {
     }
   });
 
-  ipcMain.on(IPC_CHANNELS.CLOSE_LAUNCHER, () => {
+  ipcMain.on(IPC_CHANNELS.LAUNCHER_ACTION, async (_, actionName?: string) => {
     hideLauncherWindow();
+
+    if (actionName) {
+      // Wait for window to hide and focus to be restored to previous app
+      await sleep(100);
+
+      const shortcuts = configStore.getShortcuts();
+      const shortcut = shortcuts.find(s => s.name === actionName);
+
+      if (shortcut) {
+        logger.info(`Executing launcher action: ${actionName}`);
+        triggerShortcutAction(shortcut);
+      } else {
+        logger.warn(`Launcher action not found: ${actionName}`);
+      }
+    }
   });
 
   // Handle logs from renderer

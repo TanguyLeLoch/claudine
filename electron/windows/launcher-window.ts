@@ -13,7 +13,7 @@ let launcherWindow: BrowserWindow | null = null;
 export const showLauncherWindow = (): void => {
   if (launcherWindow && !launcherWindow.isDestroyed()) {
     if (launcherWindow.isVisible()) {
-      launcherWindow.hide();
+      hideLauncherWindow();
     } else {
       // Center on the display where the mouse is
       const point = screen.getCursorScreenPoint();
@@ -22,10 +22,15 @@ export const showLauncherWindow = (): void => {
       const width = 800;
       const height = 600;
 
-      const x = display.bounds.x + (display.bounds.width - width) / 2;
-      const y = display.bounds.y + (display.bounds.height - height) / 2;
+      const x = display.workArea.x + (display.workArea.width - width) / 2;
+      const y = display.workArea.y + (display.workArea.height - height) / 2;
 
       launcherWindow.setBounds({ x: Math.floor(x), y: Math.floor(y), width, height });
+
+      if (process.platform === 'darwin') {
+        launcherWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+      }
+
       launcherWindow.show();
       launcherWindow.focus();
     }
@@ -47,10 +52,16 @@ export const showLauncherWindow = (): void => {
       preload: path.join(__dirname, '../preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
+      backgroundThrottling: false, // Prevent Angular from sleeping
     },
-    x: display.bounds.x + (display.bounds.width - 800) / 2,
-    y: display.bounds.y + (display.bounds.height - 600) / 2,
+    x: display.workArea.x + (display.workArea.width - 800) / 2,
+    y: display.workArea.y + (display.workArea.height - 600) / 2,
   });
+
+  // macOS: Show on all workspaces (including full-screen apps)
+  if (process.platform === 'darwin') {
+    launcherWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  }
 
   // Load Angular app
   const isDev = !app.isPackaged || process.argv.includes('--dev');
@@ -83,6 +94,13 @@ export const showLauncherWindow = (): void => {
  */
 export const hideLauncherWindow = (): void => {
   if (launcherWindow && !launcherWindow.isDestroyed()) {
-    launcherWindow.hide();
+    if (process.platform === 'darwin') {
+      // macOS: "Nuclear" option. Hiding the app forces focus to the next app in stack.
+      app.hide();
+    } else {
+      // Windows: Minimize forces focus yield better than hide() alone.
+      launcherWindow.minimize();
+      launcherWindow.hide();
+    }
   }
 };

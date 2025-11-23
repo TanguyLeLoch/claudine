@@ -50,7 +50,7 @@ export const IPC_CHANNELS = {
   GET_SHORTCUTS: 'get-shortcuts',
   SET_SHORTCUTS: 'set-shortcuts',
   CLOSE_SETTINGS: 'close-settings',
-  CLOSE_LAUNCHER: 'close-launcher',
+  LAUNCHER_ACTION: 'launcher-action',
   SELECTION_MADE: 'selection-made',
   SELECTION_CANCELLED: 'selection-cancelled',
   DISPLAY_BOUNDS: 'display-bounds',
