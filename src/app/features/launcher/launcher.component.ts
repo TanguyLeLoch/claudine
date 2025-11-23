@@ -34,6 +34,11 @@ export class LauncherComponent implements OnInit {
     }
   }
 
+  @HostListener('window:focus')
+  onWindowFocus() {
+    this.loadShortcuts();
+  }
+
   @HostListener('window:keydown', ['$event'])
   handleKeyPress(event: KeyboardEvent) {
     // Prevent default for navigation keys
