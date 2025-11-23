@@ -1,4 +1,4 @@
-import { Component, ElementRef, forwardRef, HostListener, OnInit, Renderer2, signal, OnDestroy } from '@angular/core';
+import { Component, ElementRef, forwardRef, HostListener, OnDestroy, OnInit, Renderer2, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -35,18 +35,21 @@ export class ShortcutRecorderComponent implements ControlValueAccessor, OnInit, 
   value: string = '';
   isRecording = false;
   isDisabled = false;
-  
+
   // To display keys visually split by '+'
   displayKeys = signal<string[]>([]);
-  
+
   // Keyboard layout map for mapping codes to characters
   private keyboardLayoutMap: KeyboardLayoutMap | null = null;
 
   // CVA callbacks
-  onChange: (value: string) => void = () => {};
-  onTouched: () => void = () => {};
+  onChange: (value: string) => void = () => {
+  };
+  onTouched: () => void = () => {
+  };
 
-  constructor(private renderer: Renderer2, private el: ElementRef) {}
+  constructor(private renderer: Renderer2, private el: ElementRef) {
+  }
 
   ngOnInit() {
     this.initKeyboardLayoutMap();
@@ -86,11 +89,11 @@ export class ShortcutRecorderComponent implements ControlValueAccessor, OnInit, 
 
   async startRecording(event: MouseEvent): Promise<void> {
     if (this.isDisabled) return;
-    
+
     event.stopPropagation(); // Prevent immediate closing if we had a click-outside logic
-    
+
     await this.suspendGlobalShortcuts();
-    
+
     this.isRecording = true;
     this.onTouched();
   }
@@ -118,6 +121,11 @@ export class ShortcutRecorderComponent implements ControlValueAccessor, OnInit, 
 
     event.preventDefault();
     event.stopPropagation();
+
+    if (event.key === 'Escape') {
+      this.stopRecording();
+      return; // Stop processing and don't save 'Escape' as a shortcut
+    }
 
     // 1. Identify Modifiers
     const modifiers: string[] = [];

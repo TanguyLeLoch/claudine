@@ -38,13 +38,13 @@
             @if (shortcut.locked) {
               <i class="pi pi-lock text-lg  text-gray-400"
                 pTooltip="System Shortcut (Fixed Position)"
-                [tooltipOptions]="tooltipOption"
+                [tooltipOptions]="tooltipOptions"
               ></i>
             } @else {
               <i cdkDragHandle
                 class="pi pi-bars text-lg cursor-move text-gray-400 hover:text-gray-600"
                 pTooltip="Move item order"
-                [tooltipOptions]="tooltipOption"
+                [tooltipOptions]="tooltipOptions"
               ></i>
             }
           </div>
@@ -64,7 +64,7 @@
                   [text]="true"
                   [rounded]="true"
                   pTooltip="Edit shortcut"
-                  [tooltipOptions]="tooltipOption"
+                  [tooltipOptions]="tooltipOptions"
                   (onClick)="openEditDialog(shortcut, i)">
                 </p-button>
 
@@ -75,7 +75,7 @@
                     [text]="true"
                     [rounded]="true"
                     pTooltip="Delete shortcut"
-                    [tooltipOptions]="tooltipOption"
+                    [tooltipOptions]="tooltipOptions"
                     (onClick)="confirmDelete($event, shortcut, i)">
                   </p-button>
                 }
@@ -83,16 +83,7 @@
             </div>
 
             <div class="flex justify-between items-center gap-2 w-full">
-              @if (shortcut.inputType === 'image') {
-                <p-tag icon="pi pi-camera" severity="warn" value="Image" pTooltip="Uses Screenshot"
-                  [tooltipOptions]="tooltipOption"></p-tag>
-              } @else if (shortcut.inputType === 'launcher') {
-                <p-tag icon="pi pi-desktop" severity="secondary" value="Launcher" pTooltip="Opens Launcher"
-                  [tooltipOptions]="tooltipOption"></p-tag>
-              } @else {
-                <p-tag icon="pi pi-file-edit" severity="info" value="Text" pTooltip="Uses Clipboard Text"
-                  [tooltipOptions]="tooltipOption"></p-tag>
-              }
+              <app-input-type-badge [inputType]="shortcut.inputType"></app-input-type-badge>
 
               <kbd
                 class="px-3 py-1.5 text-sm font-bold text-gray-800 bg-gray-100 border border-gray-300 rounded-lg shadow-sm whitespace-nowrap">

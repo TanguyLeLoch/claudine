@@ -1,15 +1,13 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
-import { TagModule } from 'primeng/tag';
 import { type ShortcutConfig } from '../../../types';
-import { Tooltip } from 'primeng/tooltip';
-import { TooltipOptions } from 'primeng/api';
+import { InputTypeBadgeComponent } from '../../shared/components/input-type-badge/input-type-badge.component';
 
 @Component({
   selector: 'app-launcher',
   standalone: true,
-  imports: [CommonModule, CardModule, TagModule, Tooltip],
+  imports: [CommonModule, CardModule, InputTypeBadgeComponent],
   templateUrl: './launcher.component.html',
   styleUrl: './launcher.component.scss'
 })
@@ -17,13 +15,6 @@ export class LauncherComponent implements OnInit {
   displayShortcuts: ShortcutConfig[] = [];
   isLoading = true;
   selectedIndex = 0;
-  tooltipOption: TooltipOptions = {
-    tooltipPosition: 'bottom',
-    tooltipStyleClass: '!min-w-10',
-    showDelay: 200,
-    hideDelay: 200,
-
-  };
 
   async ngOnInit() {
     await this.loadShortcuts();
@@ -92,17 +83,5 @@ export class LauncherComponent implements OnInit {
 
   trackByName(index: number, shortcut: ShortcutConfig): string {
     return shortcut.name;
-  }
-
-  getInputTypeIcon(inputType: string): string {
-    return inputType === 'image' ? 'pi-camera' : 'pi-file-edit';
-  }
-
-  getInputTypeSeverity(inputType: string): 'warn' | 'info' {
-    return inputType === 'image' ? 'warn' : 'info';
-  }
-
-  getInputTypeLabel(inputType: string): string {
-    return inputType === 'image' ? 'Image' : 'Text';
   }
 }

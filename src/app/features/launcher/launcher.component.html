@@ -28,16 +28,7 @@
 
             <!-- Input Type Tag -->
             <div class="flex-shrink-0">
-              @if (shortcut.inputType === 'image') {
-                <p-tag icon="pi pi-camera" severity="warn" value="Image" pTooltip="Uses Screenshot"
-                  [tooltipOptions]="tooltipOption"></p-tag>
-              } @else if (shortcut.inputType === 'launcher') {
-                <p-tag icon="pi pi-desktop" severity="secondary" value="Launcher" pTooltip="Opens Launcher"
-                  [tooltipOptions]="tooltipOption"></p-tag>
-              } @else {
-                <p-tag icon="pi pi-file-edit" severity="info" value="Text" pTooltip="Uses Clipboard Text"
-                  [tooltipOptions]="tooltipOption"></p-tag>
-              }
+              <app-input-type-badge [inputType]="shortcut.inputType"></app-input-type-badge>
             </div>
 
             <!-- Shortcut Name -->

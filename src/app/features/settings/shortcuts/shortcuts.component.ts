@@ -7,16 +7,17 @@ import { CdkDrag, CdkDragDrop, CdkDropList, DragDropModule, moveItemInArray } fr
 // PrimeNG Imports
 import { Card } from 'primeng/card';
 import { Button } from 'primeng/button';
-import { Tag } from 'primeng/tag';
 import { Toast } from 'primeng/toast';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { TooltipModule } from 'primeng/tooltip';
-import { ConfirmationService, MessageService, PrimeTemplate, TooltipOptions } from 'primeng/api';
+import { ConfirmationService, MessageService, PrimeTemplate } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 // Components & Types
 import { ShortcutEditorComponent } from './shortcut-editor/shortcut-editor.component';
+import { InputTypeBadgeComponent } from '../../../shared/components/input-type-badge/input-type-badge.component';
 import { type ShortcutConfig } from '../../../../types';
+import { DEFAULT_TOOLTIP_OPTIONS } from '../../../shared/constants/tooltip.constants';
 
 @Component({
   selector: 'app-shortcuts',
@@ -26,11 +27,11 @@ import { type ShortcutConfig } from '../../../../types';
     DragDropModule,
     Card,
     Button,
-    Tag,
     Toast,
     ConfirmPopupModule,
     TooltipModule,
-    PrimeTemplate
+    PrimeTemplate,
+    InputTypeBadgeComponent
   ],
   providers: [ConfirmationService, MessageService, DialogService],
   templateUrl: './shortcuts.component.html',
@@ -38,13 +39,7 @@ import { type ShortcutConfig } from '../../../../types';
 })
 export class ShortcutsComponent implements OnInit {
   shortcuts: ShortcutConfig[] = [];
-  tooltipOption: TooltipOptions = {
-    tooltipPosition: 'bottom',
-    tooltipStyleClass: '!min-w-10',
-    showDelay: 200,
-    hideDelay: 200,
-
-  };
+  readonly tooltipOptions = DEFAULT_TOOLTIP_OPTIONS;
 
   constructor(
     private confirmationService: ConfirmationService,
