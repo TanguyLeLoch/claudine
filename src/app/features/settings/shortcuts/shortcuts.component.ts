@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // Angular CDK Imports
-import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragDrop, CdkDropList, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 
 // PrimeNG Imports
 import { Card } from 'primeng/card';
@@ -10,7 +10,6 @@ import { Button } from 'primeng/button';
 import { Tag } from 'primeng/tag';
 import { Toast } from 'primeng/toast';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
-
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService, MessageService, PrimeTemplate, TooltipOptions } from 'primeng/api';
 
@@ -23,9 +22,7 @@ import { type ShortcutConfig } from '../../../../types';
   standalone: true,
   imports: [
     CommonModule,
-    CdkDrag,
-    CdkDropList,
-    CdkDragHandle,
+    DragDropModule,
     Card,
     Button,
     Tag,
@@ -65,38 +62,22 @@ export class ShortcutsComponent implements OnInit {
     if (window.electronAPI) {
       try {
         this.shortcuts = await window.electronAPI.getShortcuts();
-        console.log(this.shortcuts)
       } catch (err) {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to load shortcuts'
-        });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load shortcuts' });
       }
     }
   }
 
-  /**
-   * Auto-save shortcuts to Electron store
-   * Triggers live reload in Electron main process
-   */
   private async saveToElectron() {
     if (!window.electronAPI) return;
-
     try {
       await window.electronAPI.setShortcuts(this.shortcuts);
-      console.log('Shortcuts auto-saved to Electron store');
     } catch (error) {
-      console.error('Failed to save shortcuts:', error);
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Save Error',
-        detail: 'Failed to save shortcuts'
-      });
+      this.messageService.add({ severity: 'error', summary: 'Save Error', detail: 'Failed to save shortcuts' });
     }
   }
 
-  // --- CRUD Operations with Auto-Save ---
+  // --- CRUD Operations ---
 
   openAddDialog() {
     this.selectedShortcutForEdit = null;
@@ -105,22 +86,16 @@ export class ShortcutsComponent implements OnInit {
   }
 
   openEditDialog(shortcut: ShortcutConfig, index: number) {
-    this.selectedShortcutForEdit = { ...shortcut }; // Clone to avoid reference issues
+    this.selectedShortcutForEdit = { ...shortcut };
     this.editIndex = index;
     this.isEditorVisible = true;
   }
 
   async handleSave(formValue: ShortcutConfig) {
     if (this.editIndex === -1) {
-      // Create new shortcut
       this.shortcuts = [...this.shortcuts, formValue];
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Added',
-        detail: `Shortcut "${formValue.name}" added`
-      });
+      this.messageService.add({ severity: 'success', summary: 'Added', detail: `Shortcut "${formValue.name}" added` });
     } else {
-      // Update existing shortcut
       const updated = [...this.shortcuts];
       updated[this.editIndex] = formValue;
       this.shortcuts = updated;
@@ -130,10 +105,7 @@ export class ShortcutsComponent implements OnInit {
         detail: `Shortcut "${formValue.name}" updated`
       });
     }
-
     this.isEditorVisible = false;
-
-    // Auto-save after add/edit
     await this.saveToElectron();
   }
 
@@ -142,61 +114,53 @@ export class ShortcutsComponent implements OnInit {
       target: event.target as EventTarget,
       message: `Delete "${shortcut.name}"?`,
       icon: 'pi pi-exclamation-triangle',
-      rejectButtonProps: {
-        label: 'Cancel',
-        severity: 'secondary',
-        outlined: true
-      },
-      acceptButtonProps: {
-        label: 'Yes delete',
-        severity: 'danger',
-      },
+      acceptButtonProps: { severity: 'danger' },
       accept: async () => {
         this.shortcuts = this.shortcuts.filter((_, i) => i !== index);
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Deleted',
-          detail: 'Shortcut removed'
-        });
-
-        // Auto-save after delete
+        this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Shortcut removed' });
         await this.saveToElectron();
       }
     });
   }
 
-  // --- Reordering Logic ---
+  // --- Reordering Logic (SECURED) ---
 
+  /**
+   * SECURITY FAILSAFE 1: Predicate
+   * This strictly forbids dropping ANY item into Index 0.
+   * It relies purely on the index, not on the data object.
+   */
+  sortPredicate = (index: number, drag: CdkDrag<ShortcutConfig>, drop: CdkDropList<ShortcutConfig[]>) => {
+    return index !== 0;
+  };
+
+  /**
+   * SECURITY FAILSAFE 2: Drop Handler
+   * Even if the predicate is bypassed, we enforce data integrity here.
+   */
   async drop(event: CdkDragDrop<ShortcutConfig[]>) {
-    if (event.previousIndex !== event.currentIndex) {
-      moveItemInArray(this.shortcuts, event.previousIndex, event.currentIndex);
+    let targetIndex = event.currentIndex;
 
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Reordered',
-        detail: 'Shortcut order updated'
-      });
+    // Strict Rule: Nothing goes into Index 0.
+    if (targetIndex === 0) {
+      console.warn('Attempted to drop into locked Index 0. Reverting to Index 1.');
+      targetIndex = 1;
+    }
 
-      // Auto-save after reorder
+    if (event.previousIndex !== targetIndex) {
+      moveItemInArray(this.shortcuts, event.previousIndex, targetIndex);
       await this.saveToElectron();
     }
   }
 
+  // --- Reset ---
+
   confirmResetToDefault(event: Event) {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
-      message: 'Are you sure you want to reset all shortcuts to their default values? This action cannot be undone.',
+      message: 'Reset all shortcuts to default?',
       icon: 'pi pi-exclamation-triangle',
-      position: 'left',
-      rejectButtonProps: {
-        label: 'Cancel',
-        severity: 'secondary',
-        outlined: true
-      },
-      acceptButtonProps: {
-        label: 'Yes reset',
-        severity: 'danger',
-      },
+      acceptButtonProps: { severity: 'danger' },
       accept: async () => {
         await this.resetToDefault();
       }
@@ -205,22 +169,12 @@ export class ShortcutsComponent implements OnInit {
 
   async resetToDefault() {
     if (!window.electronAPI) return;
-
     try {
-      await window.electronAPI.setShortcuts([]); // Send an empty array to clear shortcuts
-      await this.loadShortcuts(); // Reload from store to reflect the cleared state
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Cleared',
-        detail: 'All shortcuts have been cleared.'
-      });
+      await window.electronAPI.setShortcuts([]);
+      await this.loadShortcuts();
+      this.messageService.add({ severity: 'success', summary: 'Cleared', detail: 'Shortcuts reset.' });
     } catch (error) {
-      console.error('Failed to clear shortcuts:', error);
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to clear shortcuts.'
-      });
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to reset.' });
     }
   }
 }

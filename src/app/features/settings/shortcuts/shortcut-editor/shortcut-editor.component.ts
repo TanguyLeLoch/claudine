@@ -18,7 +18,7 @@ interface ShortcutFormControls {
   key: FormControl<string>;
   name: FormControl<string>;
   prompt: FormControl<string>;
-  inputType: FormControl<'text' | 'image'>;
+  inputType: FormControl<'text' | 'image' | 'launcher'>;
 }
 
 @Component({
@@ -74,6 +74,14 @@ export class ShortcutEditorComponent implements OnChanges {
       this.isNew = false;
       // patchValue for FormGroup<T> expects Partial<T>, where T is the value type, not the controls type
       this.form.patchValue(this.shortcutData);
+
+      if (this.shortcutData.locked) {
+        this.form.controls.name.disable();
+        this.form.controls.inputType.disable();
+      } else {
+        this.form.controls.name.enable();
+        this.form.controls.inputType.enable();
+      }
     } else {
       this.isNew = true;
       this.form.reset({
@@ -82,6 +90,8 @@ export class ShortcutEditorComponent implements OnChanges {
         prompt: '',
         inputType: 'text'
       });
+      this.form.controls.name.enable();
+      this.form.controls.inputType.enable();
     }
   }
 
@@ -119,7 +129,8 @@ export class ShortcutEditorComponent implements OnChanges {
   onSubmit() {
     if (this.form.valid) {
       // form.value with FormGroup<ShortcutFormControls> correctly infers ShortcutConfig
-      this.save.emit(this.form.value as ShortcutConfig);
+      // Use getRawValue() to include disabled fields (like name/inputType for locked shortcuts)
+      this.save.emit(this.form.getRawValue() as ShortcutConfig);
     } else {
       this.form.markAllAsTouched();
     }

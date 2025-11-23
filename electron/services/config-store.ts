@@ -7,7 +7,8 @@ export interface ShortcutConfig {
   key: string;
   name: string;
   prompt: string;
-  inputType: 'text' | 'image';
+  inputType: 'text' | 'image' | 'launcher';
+  locked?: boolean;
 }
 
 /**
@@ -23,6 +24,13 @@ type ConfigSchema = {
  * Default shortcuts configuration
  */
 const DEFAULT_SHORTCUTS: ShortcutConfig[] = [
+  {
+    key: 'Alt+Shift+F1',
+    name: 'Open Launcher',
+    prompt: '',
+    inputType: 'launcher',
+    locked: true
+  },
   {
     key: 'Alt+F1',
     name: 'Fix typos and grammar',
@@ -73,7 +81,8 @@ const schema: Schema<ConfigSchema> = {
         key: { type: 'string' },
         name: { type: 'string' },
         prompt: { type: 'string' },
-        inputType: { type: 'string', enum: ['text', 'image'] }
+        inputType: { type: 'string', enum: ['text', 'image', 'launcher'] },
+        locked: { type: 'boolean' }
       }
     }
   }

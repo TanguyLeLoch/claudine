@@ -7,6 +7,7 @@ import { processText } from '../processor-engine/text-processor';
 import { captureAndExtractText } from '../processor-engine/screenshot-processor';
 import { configStore } from '../services/config-store';
 import { logger } from '../utils/logger';
+import { showLauncherWindow } from '../windows/launcher-window';
 
 // Flag to prevent race conditions during reload
 let isReloading = false;
@@ -55,6 +56,8 @@ export const registerShortcuts = (): void => {
             captureAndExtractText(shortcut.name).catch(err =>
               logger.error('Image processing error:', err)
             );
+          } else if (shortcut.inputType === 'launcher') {
+            showLauncherWindow();
           } else {
             logger.warn(`Unknown input type for shortcut ${shortcut.name}: ${shortcut.inputType}`);
           }

@@ -21,19 +21,37 @@
       </div>
     </ng-template>
 
-    <div cdkDropList (cdkDropListDropped)="drop($event)" class="space-y-4">
+    <div
+      cdkDropList
+      [cdkDropListSortPredicate]="sortPredicate"
+      (cdkDropListDropped)="drop($event)"
+      class="space-y-4">
 
-      @for (shortcut of shortcuts; track shortcut.name) {
-        <div cdkDrag class="flex flex-row items-center py-4 border-b border-gray-200 last:border-b-0">
-          <!-- Drag Handle -->
-          <div cdkDragHandle class="flex-shrink-0 cursor-move text-gray-400 hover:text-gray-600 mt-1">
-            <i class="pi pi-bars text-lg"></i>
+      @for (shortcut of shortcuts; track shortcut.name; let i = $index) {
+
+        <div
+          cdkDrag
+          [cdkDragDisabled]="i === 0"
+          [class.cursor-default]="i === 0"
+          class="flex flex-row items-center py-4 border-b border-gray-200 last:border-b-0 bg-white transition-colors">
+
+          <div class="w-6 flex-shrink-0 mr-1 text-center">
+            @if (!shortcut.locked) {
+              <i cdkDragHandle
+                class="pi pi-bars text-lg cursor-move text-gray-400 hover:text-gray-600 mt-1 mr-1 px-1"></i>
+            }
           </div>
-          <div class="flex flex-col pl-6">
-            <!--  first line-->
-            <div class="flex justify-between">
 
-              <span class=" text-lg font-medium text-gray-800">{{ shortcut.name }}</span>
+          <div class="flex flex-col pl-4 w-full">
+
+            <div class="flex justify-between items-center">
+              <span class="text-lg font-medium text-gray-800 flex items-center gap-2">
+                {{ shortcut.name }}
+                @if (shortcut.locked) {
+                  <i class="pi pi-lock text-xs text-gray-400" pTooltip="System Shortcut (Fixed Position)"></i>
+                }
+              </span>
+
               <div class="flex gap-1 flex-shrink-0 ml-2">
                 <p-button
                   icon="pi pi-pencil"
@@ -42,46 +60,49 @@
                   [rounded]="true"
                   pTooltip="Edit shortcut"
                   [tooltipOptions]="tooltipOption"
-                  (onClick)="openEditDialog(shortcut, shortcuts.indexOf(shortcut))">
+                  (onClick)="openEditDialog(shortcut, i)">
                 </p-button>
-                <p-button
-                  icon="pi pi-trash"
-                  severity="danger"
-                  [text]="true"
-                  [rounded]="true"
-                  pTooltip="Delete shortcut"
-                  [tooltipOptions]="tooltipOption"
-                  (onClick)="confirmDelete($event, shortcut, shortcuts.indexOf(shortcut))">
-                </p-button>
-              </div>
-            </div>
 
-            <div class="flex items-center justify-between gap-3 w-full">
-
-
-              <div class="flex justify-between w-full">
-                @if (shortcut.inputType === 'image') {
-                  <p-tag icon="pi pi-camera" severity="warn" value="Image" pTooltip="Uses Screenshot"></p-tag>
-                } @else {
-                  <p-tag icon="pi pi-file-edit" severity="info" value="Text" pTooltip="Uses Clipboard Text"></p-tag>
+                @if (!shortcut.locked) {
+                  <p-button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    [text]="true"
+                    [rounded]="true"
+                    pTooltip="Delete shortcut"
+                    [tooltipOptions]="tooltipOption"
+                    (onClick)="confirmDelete($event, shortcut, i)">
+                  </p-button>
                 }
-
-                <kbd
-                  class="px-3 py-1.5 text-sm font-bold text-gray-800 bg-gray-100 border border-gray-300 rounded-lg shadow-sm whitespace-nowrap">
-                  {{ shortcut.key }}
-                </kbd>
-              </div>
-
-
-            </div>
-
-            <div class=" text-sm text-gray-500 mt-2">
-              <div class="bg-gray-50 p-2 rounded border border-gray-100">
-                <span class="font-semibold text-xs uppercase tracking-wide text-gray-400">AI Prompt:</span>
-                <span class="italic ml-2">"{{ shortcut.prompt }}"</span>
               </div>
             </div>
+
+            <div class="flex justify-between items-center gap-2 w-full">
+              @if (shortcut.inputType === 'image') {
+                <p-tag icon="pi pi-camera" severity="warn" value="Image" pTooltip="Uses Screenshot"></p-tag>
+              } @else if (shortcut.inputType === 'launcher') {
+                <p-tag icon="pi pi-desktop" severity="secondary" value="Launcher" pTooltip="Opens Launcher"></p-tag>
+              } @else {
+                <p-tag icon="pi pi-file-edit" severity="info" value="Text" pTooltip="Uses Clipboard Text"></p-tag>
+              }
+
+              <kbd
+                class="px-3 py-1.5 text-sm font-bold text-gray-800 bg-gray-100 border border-gray-300 rounded-lg shadow-sm whitespace-nowrap">
+                {{ shortcut.key }}
+              </kbd>
+            </div>
+
+            @if (shortcut.prompt) {
+              <div class="text-sm text-gray-500 mt-2">
+                <div class="bg-gray-50 p-2 rounded border border-gray-100">
+                  <span class="font-semibold text-xs uppercase tracking-wide text-gray-400">AI Prompt:</span>
+                  <span class="italic ml-2">"{{ shortcut.prompt }}"</span>
+                </div>
+              </div>
+            }
           </div>
+
+          <div *cdkDragPlaceholder class="opacity-0"></div>
         </div>
       }
 

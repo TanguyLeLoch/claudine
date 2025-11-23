@@ -9,7 +9,7 @@
 
 
     <div class="grid grid-cols-2 gap-4">
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2" [class.col-span-2]="shortcutData?.locked">
         <label for="name" class="font-semibold text-sm">Name</label>
         <input pInputText id="name" formControlName="name"/>
         @if (hasError('name', 'required')) {
@@ -20,17 +20,19 @@
         }
       </div>
 
-      <div class="flex flex-col gap-2">
-        <label for="inputType" class="font-semibold text-sm">Input Type</label>
-        <p-select
-          inputId="inputType"
-          [options]="inputTypeOptions"
-          formControlName="inputType"
-          optionLabel="label"
-          optionValue="value"
-          class="w-full">
-        </p-select>
-      </div>
+      @if (!shortcutData?.locked) {
+        <div class="flex flex-col gap-2">
+          <label for="inputType" class="font-semibold text-sm">Input Type</label>
+          <p-select
+            inputId="inputType"
+            [options]="inputTypeOptions"
+            formControlName="inputType"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full">
+          </p-select>
+        </div>
+      }
     </div>
 
     <div class="grid grid-cols-1 gap-4">
@@ -47,21 +49,23 @@
       </div>
     </div>
 
-    <div class="flex flex-col gap-2">
-      <label for="prompt" class="font-semibold text-sm">AI Prompt</label>
-      <textarea
-        pInputTextarea
-        id="prompt"
-        formControlName="prompt"
-        rows="5"
-        placeholder="Enter the AI instruction prompt..."
-        class="w-full">
-      </textarea>
-      @if (isFieldInvalid('prompt')) {
-        <small class="text-red-600">Required</small>
-      }
-      <small class="text-gray-500">The instruction sent to the AI model</small>
-    </div>
+    @if (!shortcutData?.locked) {
+      <div class="flex flex-col gap-2">
+        <label for="prompt" class="font-semibold text-sm">AI Prompt</label>
+        <textarea
+          pInputTextarea
+          id="prompt"
+          formControlName="prompt"
+          rows="5"
+          placeholder="Enter the AI instruction prompt..."
+          class="w-full">
+        </textarea>
+        @if (isFieldInvalid('prompt')) {
+          <small class="text-red-600">Required</small>
+        }
+        <small class="text-gray-500">The instruction sent to the AI model</small>
+      </div>
+    }
 
   </form>
 
