@@ -23,6 +23,7 @@ export interface IElectronAPI {
   getProvider: () => Promise<'gemini' | 'gpt'>;
   setProvider: (provider: 'gemini' | 'gpt') => Promise<void>;
   closeSettings: () => void;
+  closeLauncher: () => void;
 
   // Overlay / Screenshot
   sendSelection: (selection: SelectionArea) => void;
@@ -49,6 +50,7 @@ export const IPC_CHANNELS = {
   GET_SHORTCUTS: 'get-shortcuts',
   SET_SHORTCUTS: 'set-shortcuts',
   CLOSE_SETTINGS: 'close-settings',
+  CLOSE_LAUNCHER: 'close-launcher',
   SELECTION_MADE: 'selection-made',
   SELECTION_CANCELLED: 'selection-cancelled',
   DISPLAY_BOUNDS: 'display-bounds',

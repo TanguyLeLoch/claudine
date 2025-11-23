@@ -10,6 +10,7 @@ const IPC_CHANNELS = {
   GET_SHORTCUTS: 'get-shortcuts',
   SET_SHORTCUTS: 'set-shortcuts',
   CLOSE_SETTINGS: 'close-settings',
+  CLOSE_LAUNCHER: 'close-launcher',
   SELECTION_MADE: 'selection-made',
   SELECTION_CANCELLED: 'selection-cancelled',
   DISPLAY_BOUNDS: 'display-bounds',
@@ -47,6 +48,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getProvider: () => ipcRenderer.invoke(IPC_CHANNELS.GET_PROVIDER),
   setProvider: (provider: string) => ipcRenderer.invoke(IPC_CHANNELS.SET_PROVIDER, provider),
   closeSettings: () => ipcRenderer.send(IPC_CHANNELS.CLOSE_SETTINGS),
+  closeLauncher: () => ipcRenderer.send(IPC_CHANNELS.CLOSE_LAUNCHER),
 
   // Shortcuts operations
   getShortcuts: () => ipcRenderer.invoke(IPC_CHANNELS.GET_SHORTCUTS),

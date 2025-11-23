@@ -2,7 +2,7 @@
  * Launcher window management
  */
 
-import { BrowserWindow, app, screen } from 'electron';
+import { app, BrowserWindow, screen } from 'electron';
 import path from 'node:path';
 
 let launcherWindow: BrowserWindow | null = null;
@@ -18,10 +18,10 @@ export const showLauncherWindow = (): void => {
       // Center on the display where the mouse is
       const point = screen.getCursorScreenPoint();
       const display = screen.getDisplayNearestPoint(point);
-      
+
       const width = 800;
       const height = 600;
-      
+
       const x = display.bounds.x + (display.bounds.width - width) / 2;
       const y = display.bounds.y + (display.bounds.height - height) / 2;
 
@@ -34,7 +34,7 @@ export const showLauncherWindow = (): void => {
 
   const point = screen.getCursorScreenPoint();
   const display = screen.getDisplayNearestPoint(point);
-  
+
   launcherWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -57,6 +57,7 @@ export const showLauncherWindow = (): void => {
 
   if (isDev) {
     launcherWindow.loadURL('http://localhost:4200/#/launcher');
+    launcherWindow.webContents.openDevTools();
   } else {
     const indexPath = path.join(__dirname, '../../claudine/browser/index.html');
     launcherWindow.loadFile(indexPath, { hash: 'launcher' });

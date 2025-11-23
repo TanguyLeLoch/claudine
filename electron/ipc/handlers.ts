@@ -5,6 +5,7 @@
 import { ipcMain } from 'electron';
 import { configStore, type ShortcutConfig } from '../services/config-store';
 import { getSettingsWindow } from '../windows/settings-window';
+import { hideLauncherWindow } from '../windows/launcher-window';
 import { IPC_CHANNELS } from './ipc-types';
 import { logger } from '../utils/logger';
 import { resumeGlobalShortcuts, suspendGlobalShortcuts } from '../shortcuts/shortcuts-manager';
@@ -50,6 +51,10 @@ export const setupIpcHandlers = (): void => {
     if (settingsWindow) {
       settingsWindow.close();
     }
+  });
+
+  ipcMain.on(IPC_CHANNELS.CLOSE_LAUNCHER, () => {
+    hideLauncherWindow();
   });
 
   // Handle logs from renderer
