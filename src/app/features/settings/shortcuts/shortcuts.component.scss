@@ -1,1 +1,23 @@
-/* No custom styles needed, Tailwind will handle it */
+/* Drag and Drop Styling */
+
+.cdk-drag-preview {
+  background-color: #f3f4f6;
+  border: 2px dashed #d1d5db;
+  border-radius: 0.5rem;
+  opacity: 0.8;
+}
+
+.cdk-drag-placeholder {
+  background-color: #f9fafb;
+  border: 2px dashed #e5e7eb;
+  border-radius: 0.5rem;
+  opacity: 0.5;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drop-list-dragging .shortcut-item:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

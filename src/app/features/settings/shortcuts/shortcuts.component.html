@@ -32,7 +32,7 @@
         <div
           cdkDrag
           [cdkDragDisabled]="shortcut.locked"
-          class="flex flex-row items-center py-4 border-b border-gray-200 last:border-b-0 bg-white transition-colors">
+          class="shortcut-item flex flex-row items-center py-4 border-b border-gray-200 last:border-b-0 bg-white">
 
           <div class="w-6 flex-shrink-0 mr-1 text-center">
             @if (shortcut.locked) {
@@ -110,7 +110,7 @@
             }
           </div>
 
-          <div *cdkDragPlaceholder class="opacity-0"></div>
+          <div *cdkDragPlaceholder class="shortcut-item flex flex-row items-center py-4"></div>
         </div>
       }
 
