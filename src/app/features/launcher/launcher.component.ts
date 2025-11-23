@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { type ShortcutConfig } from '../../../types';
@@ -15,6 +15,9 @@ export class LauncherComponent implements OnInit {
   displayShortcuts: ShortcutConfig[] = [];
   isLoading = true;
   selectedIndex = 0;
+
+  // Track list items for auto-scrolling
+  @ViewChildren('listItem') listItems!: QueryList<ElementRef>;
 
   async ngOnInit() {
     await this.loadShortcuts();
@@ -67,13 +70,25 @@ export class LauncherComponent implements OnInit {
     // Arrow navigation
     if (event.key === 'ArrowDown') {
       this.selectedIndex = Math.min(this.selectedIndex + 1, this.displayShortcuts.length - 1);
+      this.scrollToSelected();
     } else if (event.key === 'ArrowUp') {
       this.selectedIndex = Math.max(this.selectedIndex - 1, 0);
+      this.scrollToSelected();
     } else if (event.key === 'Enter') {
       if (this.displayShortcuts[this.selectedIndex]) {
         this.triggerShortcut(this.displayShortcuts[this.selectedIndex]);
       }
     }
+  }
+
+  // AUTO-SCROLL LOGIC
+  private scrollToSelected() {
+    setTimeout(() => {
+      const selectedEl = this.listItems.get(this.selectedIndex)?.nativeElement;
+      if (selectedEl) {
+        selectedEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    });
   }
 
   triggerShortcut(shortcut: ShortcutConfig) {

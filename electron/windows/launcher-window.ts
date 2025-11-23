@@ -11,6 +11,8 @@ let launcherWindow: BrowserWindow | null = null;
  * Create or show the launcher window
  */
 export const showLauncherWindow = (): void => {
+  const WIDTH = 800;
+  const HEIGHT = 300;
   if (launcherWindow && !launcherWindow.isDestroyed()) {
     if (launcherWindow.isVisible()) {
       hideLauncherWindow();
@@ -19,8 +21,8 @@ export const showLauncherWindow = (): void => {
       const point = screen.getCursorScreenPoint();
       const display = screen.getDisplayNearestPoint(point);
 
-      const width = 800;
-      const height = 600;
+      const width = WIDTH;
+      const height = HEIGHT;
 
       const x = display.workArea.x + (display.workArea.width - width) / 2;
       const y = display.workArea.y + (display.workArea.height - height) / 2;
@@ -41,8 +43,8 @@ export const showLauncherWindow = (): void => {
   const display = screen.getDisplayNearestPoint(point);
 
   launcherWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: WIDTH,
+    height: HEIGHT,
     frame: false,
     transparent: true,
     resizable: false,
@@ -54,8 +56,8 @@ export const showLauncherWindow = (): void => {
       contextIsolation: true,
       backgroundThrottling: false, // Prevent Angular from sleeping
     },
-    x: display.workArea.x + (display.workArea.width - 800) / 2,
-    y: display.workArea.y + (display.workArea.height - 600) / 2,
+    x: display.workArea.x + (display.workArea.width - WIDTH) / 2,
+    y: display.workArea.y + (display.workArea.height - HEIGHT) / 2,
   });
 
   // macOS: Show on all workspaces (including full-screen apps)
