@@ -12,6 +12,7 @@ import { Toast } from 'primeng/toast';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService, MessageService, PrimeTemplate, TooltipOptions } from 'primeng/api';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 // Components & Types
 import { ShortcutEditorComponent } from './shortcut-editor/shortcut-editor.component';
@@ -29,10 +30,9 @@ import { type ShortcutConfig } from '../../../../types';
     Toast,
     ConfirmPopupModule,
     TooltipModule,
-    ShortcutEditorComponent,
     PrimeTemplate
   ],
-  providers: [ConfirmationService, MessageService],
+  providers: [ConfirmationService, MessageService, DialogService],
   templateUrl: './shortcuts.component.html',
   styleUrl: './shortcuts.component.scss'
 })
@@ -40,17 +40,16 @@ export class ShortcutsComponent implements OnInit {
   shortcuts: ShortcutConfig[] = [];
   tooltipOption: TooltipOptions = {
     tooltipPosition: 'bottom',
-    tooltipStyleClass: '!min-w-10'
-  };
+    tooltipStyleClass: '!min-w-10',
+    showDelay: 200,
+    hideDelay: 200,
 
-  // Editor State
-  isEditorVisible = false;
-  selectedShortcutForEdit: ShortcutConfig | null = null;
-  editIndex: number = -1;
+  };
 
   constructor(
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private dialogService: DialogService
   ) {
   }
 
@@ -80,33 +79,57 @@ export class ShortcutsComponent implements OnInit {
   // --- CRUD Operations ---
 
   openAddDialog() {
-    this.selectedShortcutForEdit = null;
-    this.editIndex = -1;
-    this.isEditorVisible = true;
+    const ref: DynamicDialogRef | null = this.dialogService.open(ShortcutEditorComponent, {
+      header: 'Add New Shortcut',
+      width: '600px',
+      modal: true,
+      closable: false,
+      data: {
+        shortcutData: null,
+        existingShortcuts: this.shortcuts,
+        isNew: true
+      }
+    });
+
+    ref?.onClose.subscribe(async (formValue: ShortcutConfig) => {
+      if (formValue) {
+        this.shortcuts = [...this.shortcuts, formValue];
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Added',
+          detail: `Shortcut "${formValue.name}" added`
+        });
+        await this.saveToElectron();
+      }
+    });
   }
 
   openEditDialog(shortcut: ShortcutConfig, index: number) {
-    this.selectedShortcutForEdit = { ...shortcut };
-    this.editIndex = index;
-    this.isEditorVisible = true;
-  }
+    const ref: DynamicDialogRef | null = this.dialogService.open(ShortcutEditorComponent, {
+      header: 'Edit Shortcut',
+      width: '600px',
+      modal: true,
+      closable: false,
+      data: {
+        shortcutData: { ...shortcut },
+        existingShortcuts: this.shortcuts,
+        isNew: false
+      }
+    });
 
-  async handleSave(formValue: ShortcutConfig) {
-    if (this.editIndex === -1) {
-      this.shortcuts = [...this.shortcuts, formValue];
-      this.messageService.add({ severity: 'success', summary: 'Added', detail: `Shortcut "${formValue.name}" added` });
-    } else {
-      const updated = [...this.shortcuts];
-      updated[this.editIndex] = formValue;
-      this.shortcuts = updated;
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Updated',
-        detail: `Shortcut "${formValue.name}" updated`
-      });
-    }
-    this.isEditorVisible = false;
-    await this.saveToElectron();
+    ref?.onClose.subscribe(async (formValue: ShortcutConfig) => {
+      if (formValue) {
+        const updated = [...this.shortcuts];
+        updated[index] = formValue;
+        this.shortcuts = updated;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Updated',
+          detail: `Shortcut "${formValue.name}" updated`
+        });
+        await this.saveToElectron();
+      }
+    });
   }
 
   confirmDelete(event: Event, shortcut: ShortcutConfig, index: number) {

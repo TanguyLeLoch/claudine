@@ -31,14 +31,21 @@
 
         <div
           cdkDrag
-          [cdkDragDisabled]="i === 0"
-          [class.cursor-default]="i === 0"
+          [cdkDragDisabled]="shortcut.locked"
           class="flex flex-row items-center py-4 border-b border-gray-200 last:border-b-0 bg-white transition-colors">
 
           <div class="w-6 flex-shrink-0 mr-1 text-center">
-            @if (!shortcut.locked) {
+            @if (shortcut.locked) {
+              <i class="pi pi-lock text-lg  text-gray-400"
+                pTooltip="System Shortcut (Fixed Position)"
+                [tooltipOptions]="tooltipOption"
+              ></i>
+            } @else {
               <i cdkDragHandle
-                class="pi pi-bars text-lg cursor-move text-gray-400 hover:text-gray-600 mt-1 mr-1 px-1"></i>
+                class="pi pi-bars text-lg cursor-move text-gray-400 hover:text-gray-600"
+                pTooltip="Move item order"
+                [tooltipOptions]="tooltipOption"
+              ></i>
             }
           </div>
 
@@ -47,9 +54,7 @@
             <div class="flex justify-between items-center">
               <span class="text-lg font-medium text-gray-800 flex items-center gap-2">
                 {{ shortcut.name }}
-                @if (shortcut.locked) {
-                  <i class="pi pi-lock text-xs text-gray-400" pTooltip="System Shortcut (Fixed Position)"></i>
-                }
+
               </span>
 
               <div class="flex gap-1 flex-shrink-0 ml-2">
@@ -63,7 +68,7 @@
                   (onClick)="openEditDialog(shortcut, i)">
                 </p-button>
 
-                @if (!shortcut.locked) {
+                @if (shortcut.locked !== true) {
                   <p-button
                     icon="pi pi-trash"
                     severity="danger"
@@ -79,11 +84,14 @@
 
             <div class="flex justify-between items-center gap-2 w-full">
               @if (shortcut.inputType === 'image') {
-                <p-tag icon="pi pi-camera" severity="warn" value="Image" pTooltip="Uses Screenshot"></p-tag>
+                <p-tag icon="pi pi-camera" severity="warn" value="Image" pTooltip="Uses Screenshot"
+                  [tooltipOptions]="tooltipOption"></p-tag>
               } @else if (shortcut.inputType === 'launcher') {
-                <p-tag icon="pi pi-desktop" severity="secondary" value="Launcher" pTooltip="Opens Launcher"></p-tag>
+                <p-tag icon="pi pi-desktop" severity="secondary" value="Launcher" pTooltip="Opens Launcher"
+                  [tooltipOptions]="tooltipOption"></p-tag>
               } @else {
-                <p-tag icon="pi pi-file-edit" severity="info" value="Text" pTooltip="Uses Clipboard Text"></p-tag>
+                <p-tag icon="pi pi-file-edit" severity="info" value="Text" pTooltip="Uses Clipboard Text"
+                  [tooltipOptions]="tooltipOption"></p-tag>
               }
 
               <kbd
@@ -115,14 +123,6 @@
 
     </div>
   </p-card>
-
-  <app-shortcut-editor
-    [visible]="isEditorVisible"
-    [shortcutData]="selectedShortcutForEdit"
-    [existingShortcuts]="shortcuts"
-    (save)="handleSave($event)"
-    (cancel)="isEditorVisible = false">
-  </app-shortcut-editor>
 
   <div class="flex justify-end mt-4">
     <p-button
