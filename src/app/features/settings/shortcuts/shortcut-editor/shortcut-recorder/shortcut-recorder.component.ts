@@ -1,4 +1,15 @@
-import { Component, ElementRef, forwardRef, HostListener, OnDestroy, OnInit, Renderer2, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  forwardRef,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  Output,
+  Renderer2,
+  signal
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -35,6 +46,10 @@ export class ShortcutRecorderComponent implements ControlValueAccessor, OnInit, 
   value: string = '';
   isRecording = false;
   isDisabled = false;
+  warningMessage = signal<string>('');
+  private warningTimeout: any;
+
+  @Output() isRecordingChange = new EventEmitter<boolean>();
 
   // To display keys visually split by '+'
   displayKeys = signal<string[]>([]);
@@ -59,6 +74,9 @@ export class ShortcutRecorderComponent implements ControlValueAccessor, OnInit, 
     // Ensure shortcuts are resumed if component is destroyed while recording
     if (this.isRecording) {
       this.resumeGlobalShortcuts();
+    }
+    if (this.warningTimeout) {
+      clearTimeout(this.warningTimeout);
     }
   }
 
@@ -95,11 +113,17 @@ export class ShortcutRecorderComponent implements ControlValueAccessor, OnInit, 
     await this.suspendGlobalShortcuts();
 
     this.isRecording = true;
+    this.isRecordingChange.emit(true);
+    this.warningMessage.set(''); // Clear previous warnings
+    if (this.warningTimeout) clearTimeout(this.warningTimeout);
     this.onTouched();
   }
 
   async stopRecording(): Promise<void> {
     this.isRecording = false;
+    this.isRecordingChange.emit(false);
+    this.warningMessage.set('');
+    if (this.warningTimeout) clearTimeout(this.warningTimeout);
     await this.resumeGlobalShortcuts();
   }
 
@@ -107,6 +131,15 @@ export class ShortcutRecorderComponent implements ControlValueAccessor, OnInit, 
     event.stopPropagation();
     this.updateValue('');
     this.stopRecording();
+  }
+
+  // --- Helper ---
+  private showWarning(msg: string) {
+    this.warningMessage.set(msg);
+    if (this.warningTimeout) clearTimeout(this.warningTimeout);
+    this.warningTimeout = setTimeout(() => {
+      this.warningMessage.set('');
+    }, 2000);
   }
 
   // --- Event Handling ---
@@ -122,10 +155,12 @@ export class ShortcutRecorderComponent implements ControlValueAccessor, OnInit, 
     event.preventDefault();
     event.stopPropagation();
 
+    // --- NEW LOGIC START ---
     if (event.key === 'Escape') {
       this.stopRecording();
       return; // Stop processing and don't save 'Escape' as a shortcut
     }
+    // --- NEW LOGIC END ---
 
     // 1. Identify Modifiers
     const modifiers: string[] = [];
@@ -145,11 +180,28 @@ export class ShortcutRecorderComponent implements ControlValueAccessor, OnInit, 
       // Normalize the key for Electron (e.g., ArrowUp -> Up, " " -> Space)
       const normalizedKey = this.normalizeKeyForElectron(key, event.code);
 
+      // --- VALIDATION: Require Primary Modifier OR Function Key ---
+      const isFunctionKey = /^F([1-9]|1[0-2])$/.test(normalizedKey);
+
+      // Check for at least one "Primary" modifier (Ctrl, Alt, Command)
+      const hasPrimaryModifier = modifiers.some(m => ['Ctrl', 'Alt', 'CommandOrControl'].includes(m));
+
+      if (!isFunctionKey && !hasPrimaryModifier) {
+        // Custom feedback
+        const isShiftOnly = modifiers.length === 1 && modifiers[0] === 'Shift';
+        const msg = isShiftOnly ? 'Shift cannot be used alone' : 'Include a modifier key like Ctrl, Alt, etc (or use F-keys)';
+        this.showWarning(msg);
+        return;
+      }
+      // ----------------------------------------------------
+
       // Combine modifiers + key
       const finalShortcut = [...modifiers, normalizedKey].join('+');
 
       this.updateValue(finalShortcut);
       this.stopRecording();
+    } else {
+      // Modifier only - valid state while waiting for key
     }
   }
 

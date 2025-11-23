@@ -40,6 +40,7 @@ export class ShortcutEditorComponent {
   isNew = true;
   shortcutData: ShortcutConfig | null = null;
   existingShortcuts: ShortcutConfig[] = [];
+  isRecorderRecording = false;
 
   inputTypeOptions = [
     { label: 'Text Selection', value: 'text' },
@@ -156,6 +157,11 @@ export class ShortcutEditorComponent {
   onCancel() {
     this.ref.close();
   }
+
+  onRecorderRecordingChange(recordingStatus: boolean) {
+    this.isRecorderRecording = recordingStatus;
+  }
+
 
   hasError(fieldName: string, errorType: string): boolean {
     const field = this.form.get(fieldName);

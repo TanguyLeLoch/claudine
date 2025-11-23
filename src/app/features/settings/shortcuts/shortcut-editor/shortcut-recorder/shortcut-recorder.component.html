@@ -1,4 +1,4 @@
-<div 
+<div
   class="relative flex items-center w-full p-1.5 border rounded-md transition-colors duration-200 group"
   [ngClass]="{
     'border-primary-500 ring-2 ring-primary-100 bg-primary-50': isRecording,
@@ -12,7 +12,8 @@
     Click to record shortcut
   </div>
 
-  <div *ngIf="isRecording" class="flex items-center gap-2 text-primary-600 text-sm font-medium px-2 animate-pulse select-none">
+  <div *ngIf="isRecording"
+    class="flex items-center gap-2 text-primary-600 text-sm font-medium px-2 animate-pulse select-none">
     <i class="pi pi-circle-fill text-xs"></i>
     <span>Press keys...</span>
   </div>
@@ -31,18 +32,23 @@
       ">
         {{ k }}
       </kbd>
-      </ng-container>
+    </ng-container>
   </div>
 
   <div class="ml-auto pl-2" *ngIf="value && !isDisabled">
-    <p-button 
-      icon="pi pi-times" 
-      [text]="true" 
-      [rounded]="true" 
-      severity="secondary" 
+    <p-button
+      icon="pi pi-times"
+      [text]="true"
+      [rounded]="true"
+      severity="secondary"
       size="small"
       styleClass="w-6 h-6 !p-0 text-gray-400 hover:text-red-500"
       (onClick)="clearShortcut($event)">
     </p-button>
+  </div>
+
+  <!-- Less aggressive warning below the input -->
+  <div *ngIf="warningMessage()" class="absolute top-full left-0 mt-2 text-xs text-orange-600 font-medium pl-1 z-10">
+    {{ warningMessage() }}
   </div>
 </div>
