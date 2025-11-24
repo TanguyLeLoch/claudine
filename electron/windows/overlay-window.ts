@@ -23,6 +23,17 @@ export const selectScreenArea = async (): Promise<SelectionArea | null> => {
     const selectionWindows: BrowserWindow[] = [];
     const windowBoundsMap = new Map<number, DisplayBounds>();
 
+    const boundsRequestHandler = (event: Electron.IpcMainEvent) => {
+        const bounds = windowBoundsMap.get(event.sender.id);
+        if (bounds) {
+            logger.debug(`Sending bounds to window ${event.sender.id}`);
+            event.sender.send(IPC_CHANNELS.DISPLAY_BOUNDS, bounds);
+        } else {
+            logger.warn(`Received bounds request from unknown window ${event.sender.id}`);
+        }
+    };
+    ipcMain.on(IPC_CHANNELS.REQUEST_DISPLAY_BOUNDS, boundsRequestHandler);
+
     const isDev = !app.isPackaged || process.argv.includes('--dev');
 
     for (const display of allDisplays) {
@@ -57,6 +68,10 @@ export const selectScreenArea = async (): Promise<SelectionArea | null> => {
       };
       
       windowBoundsMap.set(selectionWindow.webContents.id, displayBounds);
+      selectionWindow.webContents.once('did-finish-load', () => {
+        logger.debug(`Sending initial bounds to window ${selectionWindow.webContents.id}`);
+        selectionWindow.webContents.send(IPC_CHANNELS.DISPLAY_BOUNDS, displayBounds);
+      });
 
       if (isDev) {
         await selectionWindow.loadURL('http://localhost:4200/#/overlay');
@@ -70,18 +85,6 @@ export const selectScreenArea = async (): Promise<SelectionArea | null> => {
     }
 
     logger.info('All overlay windows created. Waiting for user selection...');
-
-    // Handle requests for bounds from the renderer
-    const boundsRequestHandler = (event: Electron.IpcMainEvent) => {
-        const bounds = windowBoundsMap.get(event.sender.id);
-        if (bounds) {
-            logger.debug(`Sending bounds to window ${event.sender.id}`);
-            event.sender.send(IPC_CHANNELS.DISPLAY_BOUNDS, bounds);
-        } else {
-            logger.warn(`Received bounds request from unknown window ${event.sender.id}`);
-        }
-    };
-    ipcMain.on(IPC_CHANNELS.REQUEST_DISPLAY_BOUNDS, boundsRequestHandler);
 
     // Wait for selection using IPC events from any window
     return new Promise<SelectionArea | null>((resolve) => {
