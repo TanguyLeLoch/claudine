@@ -37,18 +37,6 @@ export const createTray = (): void => {
       type: 'separator',
     },
     {
-      label: 'Shortcuts',
-      submenu: [
-        { label: 'Alt+F1: Fix Typos', enabled: true },
-        { label: 'Alt+F2: Translate to English', enabled: true },
-        { label: 'Alt+F3: Translate to French', enabled: true },
-        { label: 'Alt+Shift+F2: Screenshot OCR', enabled: true },
-      ],
-    },
-    {
-      type: 'separator',
-    },
-    {
       label: 'Quit',
       click: () => {
         app.quit();
@@ -57,6 +45,11 @@ export const createTray = (): void => {
   ]);
 
   tray.setToolTip('AI Shortcut');
+
+  // Open settings window on left-click
+  tray.on('click', () => {
+    createSettingsWindow();
+  });
   tray.setContextMenu(contextMenu);
 };
 
