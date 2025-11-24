@@ -1,11 +1,36 @@
 <div #overlayContainer class="w-screen h-screen bg-transparent cursor-crosshair relative select-none overflow-hidden">
-  
-  <!-- Dimmed Background -->
-  <div *ngIf="isSelecting" class="absolute inset-0 bg-black/30 pointer-events-none"></div>
 
+  <!-- Idle Dimmed Background -->
+  <div *ngIf="!isSelecting" class="absolute inset-0 bg-black/50 pointer-events-none"></div>
+
+  <!-- Active Selection Dim Areas (everything except the selection box) -->
+  <ng-container *ngIf="isSelecting">
+    <div class="absolute inset-0 pointer-events-none">
+      <!-- Top -->
+      <div class="absolute left-0 right-0 bg-black/60"
+           [style.top.px]="0"
+           [style.height.px]="selectionBox.top"></div>
+      <!-- Bottom -->
+      <div class="absolute left-0 right-0 bg-black/60"
+           [style.top.px]="selectionBox.top + selectionBox.height"
+           [style.bottom.px]="0"></div>
+      <!-- Left -->
+      <div class="absolute bg-black/60"
+           [style.top.px]="selectionBox.top"
+           [style.left.px]="0"
+           [style.width.px]="selectionBox.left"
+           [style.height.px]="selectionBox.height"></div>
+      <!-- Right -->
+      <div class="absolute bg-black/60"
+           [style.top.px]="selectionBox.top"
+           [style.left.px]="selectionBox.left + selectionBox.width"
+           [style.right.px]="0"
+           [style.height.px]="selectionBox.height"></div>
+    </div>
+  </ng-container>
   <!-- Selection Box (Clear area) -->
   <div *ngIf="isSelecting"
-       class="absolute border-2 border-white bg-transparent shadow-[0_0_0_9999px_rgba(0,0,0,0.3)] pointer-events-none z-10"
+       class="absolute border-2 border-white bg-transparent pointer-events-none z-10"
        [style.left.px]="selectionBox.left"
        [style.top.px]="selectionBox.top"
        [style.width.px]="selectionBox.width"
