@@ -70,10 +70,14 @@ export const processText = async (operationName: string): Promise<void> => {
       provider: configStore.getProvider(),
     });
 
-    // Process the text using the prompt from config
-    const result = await provider.processText(shortcut.prompt, selectedText);
 
-    logger.debug("AI Result: " + result);
+
+    const fullPrompt = `${shortcut.prompt}\n\ninput:\n ${selectedText}`;
+    logger.info(`full prompt : ${fullPrompt}`)
+    // Process the text using the prompt from config
+    const result = await provider.processText(fullPrompt);
+
+    logger.info("AI Result: " + result);
 
     // Write result to clipboard
     clipboard.writeText(result);

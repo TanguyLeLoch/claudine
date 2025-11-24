@@ -42,7 +42,7 @@ export const createSettingsWindow = (): void => {
 
   // Open DevTools for debugging in dev mode
   if (isDev) {
-    settingsWindow.webContents.openDevTools();
+    // settingsWindow.webContents.openDevTools();
   }
 
   settingsWindow.on('closed', () => {

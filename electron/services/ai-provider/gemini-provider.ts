@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { AIProvider } from './types';
-
+import { logger } from '../../utils/logger';
 /**
  * Gemini AI Provider implementation
  * Uses data-driven dispatch with configurable prompts
@@ -17,10 +17,7 @@ export class GeminiProvider implements AIProvider {
   /**
    * Process text using a dynamic prompt from configuration
    */
-  async processText(prompt: string, text: string): Promise<string> {
-    // Combine prompt with text input, clearly separating instruction from content
-    const fullPrompt = `${prompt}\n\n${text}`;
-
+  async processText(fullPrompt: string): Promise<string> {
     try {
       const result = await this.model.generateContent(fullPrompt);
       const response = await result.response;

@@ -70,7 +70,7 @@ export const showLauncherWindow = (): void => {
 
   if (isDev) {
     launcherWindow.loadURL('http://localhost:4200/#/launcher');
-    launcherWindow.webContents.openDevTools();
+    // launcherWindow.webContents.openDevTools();
   } else {
     const indexPath = path.join(__dirname, '../../claudine/browser/index.html');
     launcherWindow.loadFile(indexPath, { hash: 'launcher' });

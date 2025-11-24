@@ -6,11 +6,11 @@
 export interface AIProvider {
   /**
    * Process text using a dynamic AI prompt
-   * @param prompt The instruction prompt (loaded from config)
-   * @param text The user's selected text
+   * @param prompt The instruction prompt (loaded from config) + input
+
    * @returns The processed text
    */
-  processText(prompt: string, text: string): Promise<string>;
+  processText(prompt: string): Promise<string>;
 
   /**
    * Process an image using a dynamic AI prompt
