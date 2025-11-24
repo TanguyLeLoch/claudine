@@ -2,7 +2,7 @@
  * IPC handlers for main-renderer communication
  */
 
-import { ipcMain } from 'electron';
+import { ipcMain, app } from 'electron';
 import { configStore, type ShortcutConfig } from '../services/config-store';
 import { getSettingsWindow } from '../windows/settings-window';
 import { hideLauncherWindow } from '../windows/launcher-window';
@@ -52,6 +52,10 @@ export const setupIpcHandlers = (): void => {
     if (settingsWindow) {
       settingsWindow.close();
     }
+  });
+
+  ipcMain.on(IPC_CHANNELS.EXIT_APP, () => {
+    app.quit();
   });
 
   ipcMain.on(IPC_CHANNELS.LAUNCHER_ACTION, async (_, actionName?: string) => {

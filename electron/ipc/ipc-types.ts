@@ -58,4 +58,5 @@ export const IPC_CHANNELS = {
   LOG_MESSAGE: 'log-message',
   SUSPEND_SHORTCUTS: 'suspend-shortcuts',
   RESUME_SHORTCUTS: 'resume-shortcuts',
+  EXIT_APP: 'exit-app',
 } as const;

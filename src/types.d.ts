@@ -30,6 +30,7 @@ export interface IElectronAPI {
   getProvider: () => Promise<'gemini' | 'gpt'>;
   setProvider: (provider: 'gemini' | 'gpt') => Promise<void>;
   closeSettings: () => void;
+  exitApp: () => void;
   submitLauncherAction: (actionName?: string) => void;
 
   // Shortcuts

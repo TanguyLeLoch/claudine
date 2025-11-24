@@ -18,6 +18,7 @@ const IPC_CHANNELS = {
   LOG_MESSAGE: 'log-message',
   SUSPEND_SHORTCUTS: 'suspend-shortcuts',
   RESUME_SHORTCUTS: 'resume-shortcuts',
+  EXIT_APP: 'exit-app',
 } as const;
 
 // Redefine types locally for the preload script
@@ -48,6 +49,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getProvider: () => ipcRenderer.invoke(IPC_CHANNELS.GET_PROVIDER),
   setProvider: (provider: string) => ipcRenderer.invoke(IPC_CHANNELS.SET_PROVIDER, provider),
   closeSettings: () => ipcRenderer.send(IPC_CHANNELS.CLOSE_SETTINGS),
+  exitApp: () => ipcRenderer.send(IPC_CHANNELS.EXIT_APP),
   submitLauncherAction: (actionName?: string) => ipcRenderer.send(IPC_CHANNELS.LAUNCHER_ACTION, actionName),
 
   // Shortcuts operations
