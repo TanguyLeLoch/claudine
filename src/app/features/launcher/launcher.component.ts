@@ -103,6 +103,12 @@ export class LauncherComponent implements OnInit {
     this.triggerShortcut(shortcut);
   }
 
+  openSettings() {
+    if (window.electronAPI) {
+      window.electronAPI.openSettings();
+    }
+  }
+
   trackByName(index: number, shortcut: ShortcutConfig): string {
     return shortcut.name;
   }

@@ -1,15 +1,7 @@
 import { BrowserWindow, screen, ipcMain, app } from 'electron';
 import path from 'node:path';
-import { IPC_CHANNELS, DisplayBounds } from '../ipc/ipc-types';
+import { IPC_CHANNELS, DisplayBounds, SelectionArea } from '@shared/ipc-types';
 import { logger } from '../utils/logger';
-
-export type SelectionArea = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  displayId: number; // ID of the display where selection was made
-};
 
 /**
  * Create overlay windows on all displays and wait for user selection

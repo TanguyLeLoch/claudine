@@ -5,15 +5,19 @@
     "target": "ES2022",
     "lib": ["ES2022"],
     "outDir": "./dist/electron",
-    "rootDir": "./electron",
+    "rootDir": ".",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
     "moduleResolution": "node",
     "types": ["node"],
-    "sourceMap": true
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["./shared/*"]
+    }
   },
-  "include": ["electron/**/*"],
-  "exclude": ["node_modules", "dist", "release", "src"]
+  "include": ["electron/**/*", "shared/**/*"],
+  "exclude": ["node_modules", "dist", "release", "src", "electron/preload.ts"]
 }

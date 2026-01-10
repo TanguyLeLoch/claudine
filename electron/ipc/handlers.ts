@@ -3,10 +3,10 @@
  */
 
 import { ipcMain, app } from 'electron';
-import { configStore, type ShortcutConfig } from '../services/config-store';
-import { getSettingsWindow } from '../windows/settings-window';
+import { configStore } from '../services/config-store';
+import { getSettingsWindow, createSettingsWindow } from '../windows/settings-window';
 import { hideLauncherWindow } from '../windows/launcher-window';
-import { IPC_CHANNELS } from './ipc-types';
+import { IPC_CHANNELS, ShortcutConfig } from '@shared/ipc-types';
 import { logger } from '../utils/logger';
 import { resumeGlobalShortcuts, suspendGlobalShortcuts, triggerShortcutAction } from '../shortcuts/shortcuts-manager';
 import { sleep } from '../utils/helpers';
@@ -52,6 +52,11 @@ export const setupIpcHandlers = (): void => {
     if (settingsWindow) {
       settingsWindow.close();
     }
+  });
+
+  ipcMain.on(IPC_CHANNELS.OPEN_SETTINGS, () => {
+    hideLauncherWindow();
+    createSettingsWindow();
   });
 
   ipcMain.on(IPC_CHANNELS.EXIT_APP, () => {

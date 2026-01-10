@@ -1,15 +1,8 @@
 import Store, { type Schema } from 'electron-store';
+import { ShortcutConfig } from '@shared/ipc-types';
 
-/**
- * Shortcut configuration interface
- */
-export interface ShortcutConfig {
-  key: string;
-  name: string;
-  prompt: string;
-  inputType: 'text' | 'image' | 'launcher';
-  locked?: boolean;
-}
+// Re-export ShortcutConfig for backward compatibility
+export type { ShortcutConfig } from '@shared/ipc-types';
 
 /**
  * Application configuration schema
