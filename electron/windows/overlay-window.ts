@@ -74,7 +74,7 @@ export const selectScreenArea = async (): Promise<SelectionArea | null> => {
       });
 
       if (isDev) {
-        await selectionWindow.loadURL('http://localhost:4200/#/overlay');
+        await selectionWindow.loadURL('http://localhost:4206/#/overlay');
       } else {
         const indexPath = path.join(__dirname, '../../claudine/browser/index.html');
         await selectionWindow.loadFile(indexPath, { hash: 'overlay' });

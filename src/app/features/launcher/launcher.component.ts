@@ -39,6 +39,7 @@ export class LauncherComponent implements OnInit {
 
   @HostListener('window:focus')
   onWindowFocus() {
+    this.selectedIndex = 0;
     this.loadShortcuts();
   }
 

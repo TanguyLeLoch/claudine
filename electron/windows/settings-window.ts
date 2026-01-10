@@ -33,7 +33,7 @@ export const createSettingsWindow = (): void => {
 
   if (isDev) {
     // Development mode - use Angular dev server for hot reloading
-    settingsWindow.loadURL('http://localhost:4200/#/settings');
+    settingsWindow.loadURL('http://localhost:4206/#/settings');
   } else {
     // Production mode - use built files
     // __dirname is app.asar/dist/electron/windows, so ../../ goes to app.asar/dist

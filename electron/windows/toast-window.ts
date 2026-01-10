@@ -52,7 +52,7 @@ export const createToastWindow = (): void => {
 
   if (isDev) {
     // Development mode - use Angular dev server on port 4200
-    toastWindow.loadURL('http://localhost:4200/#/toast');
+    toastWindow.loadURL('http://localhost:4206/#/toast');
     // toastWindow.webContents.openDevTools();
   } else {
     // Production mode - use built files

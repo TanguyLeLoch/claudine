@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 // PrimeNG Imports
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { Select } from 'primeng/select';
-import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { type ShortcutConfig } from '../../../../../types';
 import { ShortcutRecorderComponent } from './shortcut-recorder/shortcut-recorder.component';
@@ -59,8 +59,14 @@ export class ShortcutEditorComponent {
 
     // Initialize form
     this.form = this.fb.group<ShortcutFormControls>({
-      key: new FormControl('', { nonNullable: true, validators: [Validators.required, this.uniqueKeyValidator.bind(this)] }),
-      name: new FormControl('', { nonNullable: true, validators: [Validators.required, this.uniqueNameValidator.bind(this)] }),
+      key: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.required, this.uniqueKeyValidator.bind(this)]
+      }),
+      name: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.required, this.uniqueNameValidator.bind(this)]
+      }),
       prompt: new FormControl('', { nonNullable: true }),
       inputType: new FormControl('text', { nonNullable: true, validators: Validators.required })
     });
@@ -148,7 +154,12 @@ export class ShortcutEditorComponent {
     if (this.form.valid) {
       // form.value with FormGroup<ShortcutFormControls> correctly infers ShortcutConfig
       // Use getRawValue() to include disabled fields (like name/inputType for locked shortcuts)
-      this.ref.close(this.form.getRawValue() as ShortcutConfig);
+      const formValue = this.form.getRawValue();
+      const shortcutConfig: ShortcutConfig = {
+        ...formValue,
+        locked: formValue.inputType === 'launcher'
+      };
+      this.ref.close(shortcutConfig);
     } else {
       this.form.markAllAsTouched();
     }

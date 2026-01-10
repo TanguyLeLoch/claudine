@@ -69,7 +69,7 @@ export const showLauncherWindow = (): void => {
   const isDev = !app.isPackaged || process.argv.includes('--dev');
 
   if (isDev) {
-    launcherWindow.loadURL('http://localhost:4200/#/launcher');
+    launcherWindow.loadURL('http://localhost:4206/#/launcher');
     // launcherWindow.webContents.openDevTools();
   } else {
     const indexPath = path.join(__dirname, '../../claudine/browser/index.html');
