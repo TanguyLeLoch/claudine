@@ -1,8 +1,9 @@
 import Store, { type Schema } from 'electron-store';
-import { ShortcutConfig } from '@shared/ipc-types';
+import { ShortcutConfig } from '../../shared/ipc-types';
+import { logger } from '../utils/logger';
 
 // Re-export ShortcutConfig for backward compatibility
-export type { ShortcutConfig } from '@shared/ipc-types';
+export type { ShortcutConfig } from '../../shared/ipc-types';
 
 /**
  * Application configuration schema
@@ -14,41 +15,47 @@ type ConfigSchema = {
 };
 
 /**
- * Default shortcuts configuration
+ * Default shortcuts with hardcoded UUIDs (generated 2026-01-11)
  */
 const DEFAULT_SHORTCUTS: ShortcutConfig[] = [
   {
-    key: 'Alt+Shift+F1',
+    id: '019bac10-5c17-7a85-a1f8-e8e5c6db33c6',
+    key: 'F1',
     name: 'Open Launcher',
     prompt: '',
     inputType: 'launcher',
     locked: true
   },
   {
+    id: '019bac10-5c1a-7fc0-8b21-5c77287d109f',
     key: 'Alt+F1',
     name: 'Fix typos and grammar',
     prompt: 'Fix any typos and grammar mistakes in the following text. Return ONLY the corrected text without any explanations or additional comments:',
     inputType: 'text'
   },
   {
+    id: '019bac10-5c1a-7fc0-8b21-5c78a1ef7a2f',
     key: 'Alt+F2',
     name: 'Translate to English',
     prompt: 'Translate the following text to ENGLISH. Return ONLY the translated text without any explanations or additional comments:',
     inputType: 'text'
   },
   {
+    id: '019bac10-5c1a-7fc0-8b21-5c7957f77846',
     key: 'Alt+F3',
     name: 'Translate to French',
     prompt: 'Translate the following text to FRENCH. Return ONLY the translated text without any explanations or additional comments:',
     inputType: 'text'
   },
   {
+    id: '019bac10-5c1a-7fc0-8b21-5c7a5f6d6bc8',
     key: 'Alt+Shift+F2',
     name: 'Extract text from screenshot',
     prompt: 'Extract all text from this image. Return ONLY the extracted text, maintaining the original layout and structure as much as possible.',
     inputType: 'image'
   },
   {
+    id: '019bac10-5c1a-7fc0-8b21-5c7bf01d2d63',
     key: 'Alt+Shift+F3',
     name: 'Translate to Thai',
     prompt: 'Translate the following text to Thai. I am a man. Return ONLY the translated text without any explanations or additional comments:',
@@ -71,11 +78,12 @@ const schema: Schema<ConfigSchema> = {
     items: {
       type: 'object',
       properties: {
-        key: { type: 'string' },
-        name: { type: 'string' },
-        prompt: { type: 'string' },
-        inputType: { type: 'string', enum: ['text', 'image', 'launcher'] },
-        locked: { type: 'boolean' }
+        id: {type: 'string'},
+        key: {type: 'string'},
+        name: {type: 'string'},
+        prompt: {type: 'string'},
+        inputType: {type: 'string', enum: ['text', 'image', 'launcher']},
+        locked: {type: 'boolean'}
       }
     }
   }
@@ -135,14 +143,41 @@ export class ConfigStore {
 
   /**
    * Get shortcuts configuration
+   * Resets to defaults if stored shortcuts don't have IDs (migration)
    */
   getShortcuts(): ShortcutConfig[] {
-    let shortcuts = this.store.get('shortcuts') as ShortcutConfig[];
+    const shortcuts = this.store.get('shortcuts') as ShortcutConfig[];
 
-    if (!shortcuts || shortcuts.length === 0) {
+    logger.debug(`getShortcuts: retrieved ${shortcuts?.length ?? 0} shortcuts from store`);
+
+    // Migration: if shortcuts exist but don't have IDs, reset to defaults
+    if (!shortcuts || shortcuts.length === 0 || !shortcuts[0]?.id) {
+      logger.info(`getShortcuts: Migration triggered (count=${shortcuts?.length ?? 0}, hasId=${!!shortcuts?.[0]?.id})`);
+      this.logDefaultShortcuts();
+      this.store.set('shortcuts', DEFAULT_SHORTCUTS);
       return DEFAULT_SHORTCUTS;
     }
     return shortcuts;
+  }
+
+  /**
+   * Reset shortcuts to default configuration
+   * Returns the default shortcuts for convenience
+   */
+  resetToDefaults(): ShortcutConfig[] {
+    logger.info('Resetting shortcuts to defaults');
+    this.logDefaultShortcuts();
+    this.store.set('shortcuts', DEFAULT_SHORTCUTS);
+    this.notifyShortcutsListeners(DEFAULT_SHORTCUTS);
+    return DEFAULT_SHORTCUTS;
+  }
+
+  /**
+   * Log default shortcuts summary for debugging
+   */
+  private logDefaultShortcuts(): void {
+    const summary = DEFAULT_SHORTCUTS.map(s => ({ id: s.id, key: s.key, name: s.name }));
+    logger.debug(`Default shortcuts: ${JSON.stringify(summary)}`);
   }
 
   /**

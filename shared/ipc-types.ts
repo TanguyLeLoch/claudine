@@ -16,6 +16,7 @@ export const IPC_CHANNELS = {
   SET_PROVIDER: 'set-provider',
   GET_SHORTCUTS: 'get-shortcuts',
   SET_SHORTCUTS: 'set-shortcuts',
+  RESET_SHORTCUTS: 'reset-shortcuts',
   CLOSE_SETTINGS: 'close-settings',
   OPEN_SETTINGS: 'open-settings',
   LAUNCHER_ACTION: 'launcher-action',
@@ -62,6 +63,7 @@ export interface DisplayBounds {
  * Keyboard shortcut configuration
  */
 export interface ShortcutConfig {
+  id: string;
   key: string;
   name: string;
   prompt: string;
@@ -91,11 +93,12 @@ export interface IElectronAPI {
   closeSettings: () => void;
   openSettings: () => void;
   exitApp: () => void;
-  submitLauncherAction: (actionName?: string) => void;
+  submitLauncherAction: (actionId?: string) => void;
 
   // Shortcuts
   getShortcuts: () => Promise<ShortcutConfig[]>;
   setShortcuts: (shortcuts: ShortcutConfig[]) => Promise<void>;
+  resetShortcuts: () => Promise<ShortcutConfig[]>;
   suspendShortcuts: () => Promise<void>;
   resumeShortcuts: () => Promise<void>;
 

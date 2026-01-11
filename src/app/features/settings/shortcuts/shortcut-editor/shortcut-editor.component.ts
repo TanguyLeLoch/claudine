@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { uuidv7 } from 'uuidv7';
 
 // PrimeNG Imports
 import { Button } from 'primeng/button';
@@ -156,6 +157,8 @@ export class ShortcutEditorComponent {
       // Use getRawValue() to include disabled fields (like name/inputType for locked shortcuts)
       const formValue = this.form.getRawValue();
       const shortcutConfig: ShortcutConfig = {
+        // Keep existing ID when editing, generate new one when creating
+        id: this.shortcutData?.id ?? uuidv7(),
         ...formValue,
         locked: formValue.inputType === 'launcher'
       };

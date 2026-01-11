@@ -12,15 +12,15 @@ import { showToast } from '../windows/toast-window';
 import { logger } from '../utils/logger';
 
 /**
- * Operation is now a string key matching the shortcut's 'name' field in config
+ * Operation is now a string key matching the shortcut's 'id' field in config
  */
 export type TextOperation = string;
 
 /**
  * Process selected text with AI provider using data-driven dispatch
- * @param operationName The operation Name (matches shortcut config 'name' field)
+ * @param operationId The operation ID (matches shortcut config 'id' field)
  */
-export const processText = async (operationName: string): Promise<void> => {
+export const processText = async (operationId: string): Promise<void> => {
   try {
     // Check if API key is configured
     if (!configStore.hasApiKey()) {
@@ -31,10 +31,10 @@ export const processText = async (operationName: string): Promise<void> => {
 
     // Look up shortcut configuration
     const shortcuts = configStore.getShortcuts();
-    const shortcut = shortcuts.find(s => s.name === operationName && s.inputType === 'text');
+    const shortcut = shortcuts.find(s => s.id === operationId && s.inputType === 'text');
 
     if (!shortcut) {
-      logger.error(`Unknown text operation: ${operationName}`);
+      logger.error(`Unknown text operation: ${operationId}`);
       showToast('Operation not found', { severity: 'error' });
       return;
     }

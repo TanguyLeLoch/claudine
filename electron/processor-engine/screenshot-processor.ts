@@ -13,10 +13,10 @@ import Rectangle = Electron.Rectangle;
 
 /**
  * Capture a screenshot area and process it with AI using data-driven dispatch
- * @param operationName The operation name (matches shortcut config 'name' field), defaults to 'Extract text from screenshot'
+ * @param operationId The operation ID (matches shortcut config 'id' field)
  */
-export const captureAndExtractText = async (operationName: string = 'Extract text from screenshot'): Promise<void> => {
-  logger.info(`Starting captureAndExtractText with operation: ${operationName}`);
+export const captureAndExtractText = async (operationId: string): Promise<void> => {
+  logger.info(`Starting captureAndExtractText with operation: ${operationId}`);
   try {
     // Check if API key is configured
     if (!configStore.hasApiKey()) {
@@ -28,10 +28,10 @@ export const captureAndExtractText = async (operationName: string = 'Extract tex
 
     // Look up shortcut configuration
     const shortcuts = configStore.getShortcuts();
-    const shortcut = shortcuts.find(s => s.name === operationName && s.inputType === 'image');
+    const shortcut = shortcuts.find(s => s.id === operationId && s.inputType === 'image');
 
     if (!shortcut) {
-      logger.error(`Unknown image operation: ${operationName}`);
+      logger.error(`Unknown image operation: ${operationId}`);
       showToast('Operation not found', { severity: 'error' });
       return;
     }

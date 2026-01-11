@@ -1,6 +1,6 @@
 import { BrowserWindow, screen, ipcMain, app } from 'electron';
 import path from 'node:path';
-import { IPC_CHANNELS, DisplayBounds, SelectionArea } from '@shared/ipc-types';
+import { IPC_CHANNELS, DisplayBounds, SelectionArea } from '../../shared/ipc-types';
 import { logger } from '../utils/logger';
 
 /**

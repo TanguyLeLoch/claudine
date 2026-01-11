@@ -45,6 +45,7 @@
     "tailwindcss": "^4.1.12",
     "tailwindcss-primeui": "^0.6.1",
     "tslib": "^2.3.0",
+    "uuidv7": "^1.1.0",
     "winston": "^3.18.3",
     "zone.js": "~0.15.0"
   },

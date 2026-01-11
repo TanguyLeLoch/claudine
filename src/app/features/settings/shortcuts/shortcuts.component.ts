@@ -188,9 +188,9 @@ export class ShortcutsComponent implements OnInit {
   async resetToDefault() {
     if (!window.electronAPI) return;
     try {
-      await window.electronAPI.setShortcuts([]);
+      await window.electronAPI.resetShortcuts();
       await this.loadShortcuts();
-      this.messageService.add({ severity: 'success', summary: 'Cleared', detail: 'Shortcuts reset.' });
+      this.messageService.add({ severity: 'success', summary: 'Reset', detail: 'Shortcuts reset to defaults.' });
     } catch (error) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to reset.' });
     }

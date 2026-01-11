@@ -6,7 +6,7 @@ import { ipcMain, app } from 'electron';
 import { configStore } from '../services/config-store';
 import { getSettingsWindow, createSettingsWindow } from '../windows/settings-window';
 import { hideLauncherWindow } from '../windows/launcher-window';
-import { IPC_CHANNELS, ShortcutConfig } from '@shared/ipc-types';
+import { IPC_CHANNELS, ShortcutConfig } from '../../shared/ipc-types';
 import { logger } from '../utils/logger';
 import { resumeGlobalShortcuts, suspendGlobalShortcuts, triggerShortcutAction } from '../shortcuts/shortcuts-manager';
 import { sleep } from '../utils/helpers';
@@ -39,6 +39,11 @@ export const setupIpcHandlers = (): void => {
     configStore.setShortcuts(shortcuts);
   });
 
+  ipcMain.handle(IPC_CHANNELS.RESET_SHORTCUTS, () => {
+    logger.info('IPC: Reset shortcuts requested');
+    return configStore.resetToDefaults();
+  });
+
   ipcMain.handle(IPC_CHANNELS.SUSPEND_SHORTCUTS, () => {
     suspendGlobalShortcuts();
   });
@@ -63,21 +68,21 @@ export const setupIpcHandlers = (): void => {
     app.quit();
   });
 
-  ipcMain.on(IPC_CHANNELS.LAUNCHER_ACTION, async (_, actionName?: string) => {
+  ipcMain.on(IPC_CHANNELS.LAUNCHER_ACTION, async (_, actionId?: string) => {
     hideLauncherWindow();
 
-    if (actionName) {
+    if (actionId) {
       // Wait for window to hide and focus to be restored to previous app
       await sleep(100);
 
       const shortcuts = configStore.getShortcuts();
-      const shortcut = shortcuts.find(s => s.name === actionName);
+      const shortcut = shortcuts.find(s => s.id === actionId);
 
       if (shortcut) {
-        logger.info(`Executing launcher action: ${actionName}`);
+        logger.info(`Executing launcher action: ${shortcut.name} (${actionId})`);
         triggerShortcutAction(shortcut);
       } else {
-        logger.warn(`Launcher action not found: ${actionName}`);
+        logger.warn(`Launcher action not found: ${actionId}`);
       }
     }
   });

@@ -4,7 +4,7 @@
     "module": "commonjs",
     "target": "ES2022",
     "lib": ["ES2022"],
-    "outDir": "./dist/electron",
+    "outDir": "./dist",
     "rootDir": ".",
     "esModuleInterop": true,
     "resolveJsonModule": true,

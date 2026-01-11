@@ -18,17 +18,17 @@ let isReloading = false;
 export const triggerShortcutAction = (shortcut: ShortcutConfig): void => {
   // Dispatch based on input type
   if (shortcut.inputType === 'text') {
-    processText(shortcut.name).catch(err =>
+    processText(shortcut.id).catch(err =>
       logger.error('Text processing error:', err)
     );
   } else if (shortcut.inputType === 'image') {
-    captureAndExtractText(shortcut.name).catch(err =>
+    captureAndExtractText(shortcut.id).catch(err =>
       logger.error('Image processing error:', err)
     );
   } else if (shortcut.inputType === 'launcher') {
     showLauncherWindow();
   } else {
-    logger.warn(`Unknown input type for shortcut ${shortcut.name}: ${shortcut.inputType}`);
+    logger.warn(`Unknown input type for shortcut ${shortcut.name} (${shortcut.id}): ${shortcut.inputType}`);
   }
 };
 
@@ -65,13 +65,13 @@ export const registerShortcuts = (): void => {
       try {
         // Attempt to register the shortcut
         const isRegistered = globalShortcut.register(shortcut.key, () => {
-          logger.info(`Shortcut triggered: ${shortcut.key} (${shortcut.name})`);
+          logger.info(`Shortcut triggered: ${shortcut.key} → ${shortcut.name} (${shortcut.id})`);
           triggerShortcutAction(shortcut);
         });
 
         if (isRegistered) {
           registeredCount++;
-          logger.debug(`Registered: ${shortcut.key} → ${shortcut.name}`);
+          logger.debug(`Registered: ${shortcut.key} → ${shortcut.name} (${shortcut.id})`);
         } else {
           logger.warn(`Failed to register: ${shortcut.key}. It might be used by another app.`);
         }

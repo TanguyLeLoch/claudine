@@ -94,7 +94,7 @@ export class LauncherComponent implements OnInit {
 
   triggerShortcut(shortcut: ShortcutConfig) {
     if (window.electronAPI) {
-      window.electronAPI.submitLauncherAction(shortcut.name);
+      window.electronAPI.submitLauncherAction(shortcut.id);
     }
   }
 
@@ -109,7 +109,7 @@ export class LauncherComponent implements OnInit {
     }
   }
 
-  trackByName(index: number, shortcut: ShortcutConfig): string {
-    return shortcut.name;
+  trackById(index: number, shortcut: ShortcutConfig): string {
+    return shortcut.id;
   }
 }

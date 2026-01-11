@@ -24,6 +24,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Shortcuts operations
   getShortcuts: () => ipcRenderer.invoke(IPC_CHANNELS.GET_SHORTCUTS),
   setShortcuts: (shortcuts: ShortcutConfig[]) => ipcRenderer.invoke(IPC_CHANNELS.SET_SHORTCUTS, shortcuts),
+  resetShortcuts: () => ipcRenderer.invoke(IPC_CHANNELS.RESET_SHORTCUTS),
   suspendShortcuts: () => ipcRenderer.invoke(IPC_CHANNELS.SUSPEND_SHORTCUTS),
   resumeShortcuts: () => ipcRenderer.invoke(IPC_CHANNELS.RESUME_SHORTCUTS),
 
