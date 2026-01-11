@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { uuidv7 } from 'uuidv7';
@@ -174,6 +174,16 @@ export class ShortcutEditorComponent {
 
   onRecorderRecordingChange(recordingStatus: boolean) {
     this.isRecorderRecording = recordingStatus;
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  handleKeydown(event: KeyboardEvent) {
+    console.log('[ShortcutEditor] Keydown:', event.key, 'isRecording:', this.isRecorderRecording);
+    if (event.key === 'Escape' && !this.isRecorderRecording) {
+      console.log('[ShortcutEditor] Closing dialog via Escape');
+      event.preventDefault();
+      this.onCancel();
+    }
   }
 
 

@@ -57,7 +57,7 @@ export class ShortcutsComponent implements OnInit {
       try {
         this.shortcuts = await window.electronAPI.getShortcuts();
       } catch (err) {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load shortcuts' });
+        this.messageService.add({severity: 'error', summary: 'Error', detail: 'Failed to load shortcuts'});
       }
     }
   }
@@ -67,24 +67,28 @@ export class ShortcutsComponent implements OnInit {
     try {
       await window.electronAPI.setShortcuts(this.shortcuts);
     } catch (error) {
-      this.messageService.add({ severity: 'error', summary: 'Save Error', detail: 'Failed to save shortcuts' });
+      this.messageService.add({severity: 'error', summary: 'Save Error', detail: 'Failed to save shortcuts'});
     }
   }
 
   // --- CRUD Operations ---
 
   openAddDialog() {
-    const ref: DynamicDialogRef | null = this.dialogService.open(ShortcutEditorComponent, {
+    const dialogConfig = {
       header: 'Add New Shortcut',
       width: '600px',
       modal: true,
       closable: false,
+      closeOnEscape: false,
+      dismissableMask: true,
       data: {
         shortcutData: null,
         existingShortcuts: this.shortcuts,
         isNew: true
       }
-    });
+    };
+    console.log('[ShortcutsComponent] Opening Add dialog with config:', dialogConfig);
+    const ref: DynamicDialogRef | null = this.dialogService.open(ShortcutEditorComponent, dialogConfig);
 
     ref?.onClose.subscribe(async (formValue: ShortcutConfig) => {
       if (formValue) {
@@ -100,17 +104,21 @@ export class ShortcutsComponent implements OnInit {
   }
 
   openEditDialog(shortcut: ShortcutConfig, index: number) {
-    const ref: DynamicDialogRef | null = this.dialogService.open(ShortcutEditorComponent, {
+    const dialogConfig = {
       header: 'Edit Shortcut',
       width: '600px',
       modal: true,
       closable: false,
+      closeOnEscape: false, // Handled manually in ShortcutEditorComponent to check recording state
+      dismissableMask: true,
       data: {
-        shortcutData: { ...shortcut },
+        shortcutData: {...shortcut},
         existingShortcuts: this.shortcuts,
         isNew: false
       }
-    });
+    };
+    console.log('[ShortcutsComponent] Opening Edit dialog with config:', dialogConfig);
+    const ref: DynamicDialogRef | null = this.dialogService.open(ShortcutEditorComponent, dialogConfig);
 
     ref?.onClose.subscribe(async (formValue: ShortcutConfig) => {
       if (formValue) {
@@ -132,10 +140,10 @@ export class ShortcutsComponent implements OnInit {
       target: event.target as EventTarget,
       message: `Delete "${shortcut.name}"?`,
       icon: 'pi pi-exclamation-triangle',
-      acceptButtonProps: { severity: 'danger' },
+      acceptButtonProps: {severity: 'danger'},
       accept: async () => {
         this.shortcuts = this.shortcuts.filter((_, i) => i !== index);
-        this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Shortcut removed' });
+        this.messageService.add({severity: 'success', summary: 'Deleted', detail: 'Shortcut removed'});
         await this.saveToElectron();
       }
     });
@@ -178,7 +186,7 @@ export class ShortcutsComponent implements OnInit {
       target: event.target as EventTarget,
       message: 'Reset all shortcuts to default?',
       icon: 'pi pi-exclamation-triangle',
-      acceptButtonProps: { severity: 'danger' },
+      acceptButtonProps: {severity: 'danger'},
       accept: async () => {
         await this.resetToDefault();
       }
@@ -190,9 +198,9 @@ export class ShortcutsComponent implements OnInit {
     try {
       await window.electronAPI.resetShortcuts();
       await this.loadShortcuts();
-      this.messageService.add({ severity: 'success', summary: 'Reset', detail: 'Shortcuts reset to defaults.' });
+      this.messageService.add({severity: 'success', summary: 'Reset', detail: 'Shortcuts reset to defaults.'});
     } catch (error) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to reset.' });
+      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Failed to reset.'});
     }
   }
 }
