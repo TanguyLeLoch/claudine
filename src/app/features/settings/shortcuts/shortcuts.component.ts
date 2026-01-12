@@ -78,7 +78,7 @@ export class ShortcutsComponent implements OnInit {
       header: 'Add New Shortcut',
       width: '600px',
       modal: true,
-      closable: false,
+      closable: true,
       closeOnEscape: false,
       dismissableMask: true,
       data: {
@@ -108,8 +108,8 @@ export class ShortcutsComponent implements OnInit {
       header: 'Edit Shortcut',
       width: '600px',
       modal: true,
-      closable: false,
-      closeOnEscape: false, // Handled manually in ShortcutEditorComponent to check recording state
+      closable: true,
+      closeOnEscape: false, // Escape handled manually in ShortcutEditorComponent to prevent closing while recording
       dismissableMask: true,
       data: {
         shortcutData: {...shortcut},
